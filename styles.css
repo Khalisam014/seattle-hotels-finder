@@ -1,0 +1,141 @@
+* {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+}
+
+.flex-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.space-between {
+  justify-content: space-between;
+}
+
+.space-evenly {
+  justify-content: space-evenly;
+}
+
+/** HEADER **/
+
+header {
+  height: 10vh;
+  padding: 0 15px;
+  margin: auto;
+  background-color: rgb(231, 242, 245);
+  border-bottom: 1px solid rgba(211, 211, 211, 0.472);
+  box-shadow: 0px 2px 8px rgba(126, 126, 126, 0.2);
+}
+
+header img {
+  height: 45%;
+}
+
+header div {
+  height: 100%;
+}
+
+#nav-items {
+  width: 40%;
+}
+
+#icons {
+  width: 8%;
+  justify-content: space-evenly;
+}
+
+header a {
+  text-decoration: none;
+  color: black;
+  font-size: 17px;
+  font-weight: 400;
+  display: inline-block;
+  position: relative;
+}
+
+header a::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: black;
+  transform-origin: bottom right;
+  transition: transform 0.3s ease-out;
+}
+
+header a:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+/** HOME **/
+#home img {
+  height: 90vh;
+  width: 100%;
+  opacity: 75%;
+  object-fit: cover;
+}
+
+#home {
+  position: relative;
+  width: 100%;
+  height: auto;
+}
+
+#home img {
+  height: 90vh;
+  width: 100%;
+  opacity: 75%;
+  object-fit: cover;
+  display: block;
+}
+
+#home h2 {
+  position: absolute;
+  top: 20%;
+  left: 10%;
+  font-size: 5rem;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 10px;
+}
+
+/** BROWSE **/
+#browse {
+  height: 80vh;
+  width: 80%;
+  margin: auto;
+  padding-top: 10vh;
+}
+
+#search-bar {
+  border: 1px solid gray;
+  box-shadow: 0px 2px 8px rgba(126, 126, 126, 0.2);
+  border-radius: 15px;
+  padding: 10px 20px;
+  height: 12vh;
+  justify-content: left;
+}
+
+#search-bar > div {
+  width: 50%;
+  height: 100%;
+  gap: 10px;
+  justify-content: left;
+}
+
+#search-bar img {
+  height: 80%;
+}
+
+#travelers, #rooms {
+  width: 40px;
+}
