@@ -9,10 +9,6 @@
   align-items: center;
 }
 
-.flex-row {
-  flex-direction: row;
-}
-
 .space-between {
   justify-content: space-between;
 }
@@ -77,13 +73,6 @@ header a:hover::after {
 }
 
 /** HOME **/
-#home img {
-  height: 90vh;
-  width: 100%;
-  opacity: 75%;
-  object-fit: cover;
-}
-
 #home {
   position: relative;
   width: 100%;
