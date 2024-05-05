@@ -7,8 +7,11 @@
   let slides = [];
   let slideInterval;
 
+  const SIX_SECONDS = 6000;
+
   /**
-   * Initializes the event listeners for dropdown toggling, document clicking, and slideshow initialization.
+   * Initializes the event listeners for dropdown toggling, document clicking,
+   * and slideshow initialization.
    */
   function init() {
     setupDropdownToggle();
@@ -34,7 +37,8 @@
   }
 
   /**
-   * Sets up an event listener on the window to close the dropdown if the user clicks outside of the profile icon.
+   * Sets up an event listener on the window to close the dropdown if the user clicks
+   * outside of the profile icon.
    */
   function setupOutsideClickListener() {
     window.onclick = function(event) {
@@ -53,7 +57,7 @@
    * Initializes the slideshow by starting the automatic slide transition interval.
    */
   function initSlideshow() {
-    slideInterval = setInterval(nextSlide, 6000);
+    slideInterval = setInterval(nextSlide, SIX_SECONDS);
     showSlides();
   }
 
@@ -79,7 +83,7 @@
   function setupSlideshowEvents() {
     const slideshowContainer = document.getElementById('slideshow');
     slideshowContainer.onmouseover = () => clearInterval(slideInterval);
-    slideshowContainer.onmouseout = () => slideInterval = setInterval(nextSlide, 6000);
+    slideshowContainer.onmouseout = () => slideInterval = setInterval(nextSlide, SIX_SECONDS);
   }
 
   /**
