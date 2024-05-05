@@ -6,10 +6,11 @@
   <link href="styles.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
   <title>Hotel App</title>
+  <script src="index.js"></script>
 </head>
 <body>
   <header class="flex-row space-between">
-    <h1>Hotels</h1>
+    <a href="index.html"><h1> Seattle Hotels</h1></a>
     <div id="nav-items" class="flex-row space-between">
       <a href="#browse">Browse</a>
       <a>Map</a>
@@ -17,12 +18,37 @@
     </div>
     <div id="icons" class="flex-row space-evenly">
       <img src="img/heart.png" alt="Favorites icon"> <!-- Icon from Flaticon by Chanut -->
-      <img src="img/user.png" alt="Profile icon"> <!-- Icon from Flaticon by Chanut -->
+        <img src="img/user.png" alt="Dropdown Icon" class="profile-icon"> <!-- Icon from Flaticon by Chanut -->
+        <div class="dropdown-menu">
+            <a href="#">Account</a>
+            <a href="#">My Trips</a>
+            <a href="#">Settings</a>
+            <a href="#">Sign out</a>
+        </div>
     </div>
   </header>
   <main>
     <section id="home">
-      <img src="https://travel.usnews.com/dims4/USNEWS/b824d56/2147483647/resize/1280x350%5E%3E/crop/1280x350/quality/85/?url=https%3A%2F%2Ftravel.usnews.com%2Fimages%2FSeattle_hero_2024_Getty_vPQQaBR.jpg" alt="Space needle (picture of seattle)">
+      <div id="slideshow">
+        <div class="slide active">
+          <img src="https://th.bing.com/th/id/R.81a3d75e2038cecaaef82122dc7bf9cb?rik=FD4XDSTWKxf0BA&pid=ImgRaw&r=0">
+        </div>
+        <div class="slide">
+          <img src="https://a.cdn-hotels.com/gdcs/production61/d82/a576d12c-3bc9-4b6b-858d-c4073add2c0b.jpg">
+        </div>
+        <div class="slide">
+          <img src="https://cdn.getyourguide.com/img/location/5c90e2c684330.jpeg/88.jpg">
+        </div>
+        <div class="slide">
+          <img src="https://cdn.getyourguide.com/img/location/5c90e2c684330.jpeg/88.jpg">
+        </div>
+        <div class="slide">
+          <img src="https://wallpapercave.com/wp/wp3120766.jpg">
+        </div>
+        <div class="slide">
+          <img src="https://th.bing.com/th/id/R.b9c13274d2822b5841bdd774c07efa67?rik=MUwdxhzPkWgfVw&pid=ImgRaw&r=0">
+        </div>
+      </div>
       <h2>Seattle</h2>
     </section>
 
@@ -39,18 +65,60 @@
         <div class="flex-row">
           <img src="img/group.png" alt="Group icon"> <!-- Icon from Flaticon by Chanut -->
           <div>
-            <p>Travelers</p>
+            <p>Traveler(s)</p>
             <input type="number" id="travelers">
-            <label for="travelers">Travelers,</label>
+            <label for="travelers">Traveler(s),</label>
             <input type="number" id="rooms">
-            <label for="rooms">Rooms</label>
+            <label for="rooms">Room(s)</label>
+          </div>
+        </div>
+        <button> Search </button>
+      </article>
+      <article id="category-bar">
+        <h2>Browse By Category </h2>
+        <div class="flex-row-two">
+          <div class="category">
+            <img src="img/veterinary.png" alt="paw icon"> <!-- Icon from Flaticon by Chanut -->
+            <span>Pet Friendly</span>
+          </div>
+          <div class="category">
+            <img src="img/family.png" alt="family icon"> <!-- Icon from Flaticon by Chanut -->
+            <span>Family Friendly</span>
+          </div>
+          <div class="category">
+            <img src="img/hot-tub.png" alt="hot tub icon"> <!-- Icon from Flaticon by Chanut -->
+            <span>Hot Tub</span>
+          </div>
+          <div class="category">
+            <img src="img/swimming.png" alt="swimming icon"> <!-- Icon from Flaticon by Chanut -->
+            <span>Pool</span>
+          </div>
+          <div class="category">
+            <img src="img/all-inclusive.png" alt="swimming icon"> <!-- Icon from Flaticon by Chanut -->
+            <span>All inclusive</span>
+          </div>
+          <div class="category">
+            <img src="img/facial-massage.png" alt="spa icon"> <!-- Icon from Flaticon by Chanut -->
+            <span>Spa</span>
+          </div>
+          <div class="category">
+            <img src="img/parking.png" alt="parking icon"> <!-- Icon from Flaticon by Chanut -->
+            <span>Free Parking</span>
+          </div>
+          <div class="category">
+            <img src="img/english-breakfast.png" alt="breakfast icon"> <!-- Icon from Flaticon by Chanut -->
+            <span>Breakfast</span>
+          </div>
+          <div class="category">
+            <img src="img/valet.png" alt="valet icon"> <!-- Icon from Flaticon by Chanut -->
+            <span>Valet</span>
           </div>
         </div>
       </article>
+      <article>
     </section>
   </main>
   <footer>
-
   </footer>
 </body>
 </html>
