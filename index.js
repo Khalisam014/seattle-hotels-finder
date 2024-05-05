@@ -82,8 +82,12 @@
    */
   function setupSlideshowEvents() {
     const slideshowContainer = document.getElementById('slideshow');
-    slideshowContainer.onmouseover = () => clearInterval(slideInterval);
-    slideshowContainer.onmouseout = () => slideInterval = setInterval(nextSlide, SIX_SECONDS);
+    slideshowContainer.onmouseover = () => {
+      clearInterval(slideInterval);
+    };
+    slideshowContainer.onmouseout = () => {
+      slideInterval = setInterval(nextSlide, SIX_SECONDS);
+    };
   }
 
   /**
