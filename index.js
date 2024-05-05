@@ -74,7 +74,7 @@
    */
   function showSlides() {
     Array.from(slides).forEach(slide => {
-    slide.style.opacity = '0';
+      slide.style.opacity = '0';
     });
     slides[slideIndex].style.opacity = '1';
   }
