@@ -1,6 +1,13 @@
+/*
+  Name: Cadence Lamphiear & Sama Khalid
+  Date: May 3, 2024
+  Section: AD Max & Allan
+  This is the CSS file for the login html only.
+*/
+
 * {
-font-family: 'Poppins', sans-serif;
-margin: 0;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
 }
 
 body {
@@ -29,17 +36,17 @@ body {
   flex-direction: column;
 }
 
-#input-container {
+.input-container {
   margin-bottom: 20px;
 }
 
-#input-container label {
+.input-container label {
   display: block;
   margin-bottom: 5px;
   color: #666;
 }
 
-#input-container input {
+.input-container input {
   width: 80%;
   padding: 10px;
   border: 1px solid #ccc;

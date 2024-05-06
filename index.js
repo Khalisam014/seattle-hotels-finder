@@ -1,3 +1,12 @@
+/*
+ * Name: Cadence Lamphiear & Sama Khalid
+ * Date: May 3, 2024
+ * Section: AD Max & Allan
+ *
+ * This is the JS for my index.html and login.html. It deals with the picture
+ * slideshow, drop down menu, and login stuff.
+ */
+
 "use strict";
 
 (function() {
