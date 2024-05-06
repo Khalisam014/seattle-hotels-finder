@@ -6,6 +6,7 @@
   let slideIndex = 0;
   let slides = [];
   let slideInterval;
+  let username = sessionStorage.getItem('username');
 
   const SIX_SECONDS = 6000;
 
@@ -14,25 +15,43 @@
    * and slideshow initialization.
    */
   function init() {
-    setupDropdownToggle();
-    setupOutsideClickListener();
-    slides = document.getElementsByClassName("slide");
-    initSlideshow();
-    setupSlideshowEvents();
+    if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
+      id('profile-icon').addEventListener('click', handleProfile);
+      setupOutsideClickListener();
+      slides = document.getElementsByClassName("slide");
+      initSlideshow();
+      setupSlideshowEvents();
+
+      const signOutLink = id('sign-out-link');
+      if (signOutLink) {
+        signOutLink.addEventListener('click', signOut);
+      }
+    } else if (window.location.pathname === '/login.html') {
+      id('login-form').addEventListener('submit', (evnt) => {
+        evnt.preventDefault();
+        signIn();
+      });
+    }
+  }
+
+  /**
+   * If the user needs to sign in or if the dropdown can be toggled.
+   */
+  function handleProfile() {
+    if (username === null) {
+      location.assign('login.html');
+    } else {
+      setupDropdownToggle();
+    }
   }
 
   /**
    * Sets up the dropdown toggle functionality.
    */
   function setupDropdownToggle() {
-    const profileIcon = qs('.profile-icon');
-    if (profileIcon) {
-      profileIcon.addEventListener('click', function() {
-        const dropdown = qs('.dropdown-menu');
-        if (dropdown) {
-          dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
-        }
-      });
+    const dropdown = qs('.dropdown-menu');
+    if (dropdown) {
+      dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
     }
   }
 
@@ -42,7 +61,7 @@
    */
   function setupOutsideClickListener() {
     window.onclick = function(event) {
-      if (!event.target.matches('.profile-icon')) {
+      if (!event.target.matches('#profile-icon')) {
         const dropdowns = document.getElementsByClassName("dropdown-menu");
         Array.from(dropdowns).forEach(function(dropdown) {
           if (dropdown.style.display === 'block') {
@@ -51,6 +70,23 @@
         });
       }
     };
+  }
+
+  /**
+   * Saves the username when the user logs in (doesn't do much else yet)
+   */
+  function signIn() {
+    username = id('username').value;
+    sessionStorage.setItem('username', username);
+    location.assign('index.html');
+  }
+
+  /**
+   * Handles signing out the user.
+   */
+  function signOut() {
+    username = null;
+    sessionStorage.removeItem('username');
   }
 
   /**
@@ -99,6 +135,15 @@
    */
   function qs(selector) {
     return document.querySelector(selector);
+  }
+
+  /**
+   * Returns the element that has the ID attribute with the specified value.
+   * @param {string} id - element ID
+   * @return {object} DOM object associated with id.
+   */
+  function id(id) {
+    return document.getElementById(id);
   }
 
 })();
