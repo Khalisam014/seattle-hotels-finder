@@ -41,21 +41,7 @@ app.get('/hotels', async (req, res) => {
     } else { // return all hotels
       let hotelQuery = 'SELECT * FROM hotels';
       let hotels = await db.all(hotelQuery);
-      let result = {'hotels' : []};
-      for (const element of hotels) {
-        let amenityQuery = 'SELECT amenity_name FROM amenities WHERE hotel_id = ?';
-        let amenities = await db.all(amenityQuery, element.hotel_id);
-        let amenityNames = amenities.map(a => a.amenity_name);
-        let hotel = {
-          'name': element.name,
-          'address': element.address,
-          'description': element.description,
-          'rating': element.rating,
-          'phone_number': element.phone_number,
-          'amenities': amenityNames
-        }
-        result.hotels.push(hotel);
-      }
+      let result = await organizeHotelData(db, hotels);
       res.json(result);
     }
     await db.close();
@@ -72,7 +58,7 @@ app.get('/login/:username/:password', async (req, res) => {
     let password = req.params.password;
     let db = await getDBConnection();
 
-    let query = 'SELECT * FROM users WHERE username = ? AND password = ?'
+    let query = 'SELECT * FROM users WHERE username = ? AND password = ?';
     let result = await db.get(query, username, password);
     await db.close();
     if (result) {
@@ -106,17 +92,7 @@ app.get('/transaction', async (req, res) => {
       let query = 'SELECT * FROM reservations WHERE user_id = ?';
       let result = await db.all(query, userID);
       if (result.length > 0) {
-        let userTransactions = {'user_id': result[0].user_id, reservations: []};
-        for (const element of result) {
-          let reservation = {
-            'reservation_id': element.reservation_id,
-            'room_id': element.room_id,
-            'check_in_date': element.check_in_date,
-            'check_out_date': element.check_out_date,
-            'total_price': element.total_price,
-          }
-          userTransactions['reservations'].push(reservation);
-        }
+        let userTransactions = formatUserTransactionData(result);
         res.json(userTransactions);
       } else {
         res.status(CLIENT_ERROR).type('text')
@@ -128,12 +104,19 @@ app.get('/transaction', async (req, res) => {
     }
     await db.close();
   } catch (err) {
-    console.error(err);
     res.status(SERVER_ERROR).type('text')
       .send(SERVER_ERROR_MSG);
   }
 })
 
+/**
+ * A helper function for the '/hotels' endpoint. Filters based on the parameters.
+ * @param {Object} db - The database object for the connection.
+ * @param {String} name - the hotel name
+ * @param {String} amenity - the amenity to find
+ * @param {Number} rating - the rating that the hotel must have more than
+ * @returns {JSON} - the json to be sent back
+ */
 async function getFilteredResult(db, name, amenity, rating) {
   let result;
   if (name && rating) {
@@ -146,30 +129,56 @@ async function getFilteredResult(db, name, amenity, rating) {
     let query = 'SELECT * FROM hotels WHERE rating >= ?';
     result = await db.all(query, rating);
   }
+  return await organizeHotelData(db, result, amenity);
+}
 
-  if (amenity) {
-    let hotels = {'hotels': []};
-    for (const element of result) {
-      let amenityQuery = 'SELECT amenity_name FROM amenities WHERE hotel_id = ?';
-      let amenities = await db.all(amenityQuery, element.hotel_id);
-      let amenityNames = amenities.map(a => a.amenity_name);
-
-      if (amenityNames.includes(amenity)) {
-        let hotel = {
-          'name': element.name,
-          'address': element.address,
-          'description': element.description,
-          'rating': element.rating,
-          'phone_number': element.phone_number,
-          'amenities': amenityNames
-        }
-        hotels.hotels.push(hotel);
+/**
+ * A helper function to sort out the hotel information so all the amenities of the
+ * hotel are included in the object.
+ * @param {Object} db - the database object for the connection
+ * @param {JSON} hotels - an object array of hotels and their inforamtion
+ * @param {String} amenity - the amenity to filter by, if needed, otherwise undefined
+ * @returns {JSON} - the organized JSON of the hotels
+ */
+async function organizeHotelData(db, hotels, amenity) {
+  let result = {'hotels': []};
+  for (const element of hotels) {
+    let amenityQuery = 'SELECT amenity_name FROM amenities WHERE hotel_id = ?';
+    let amenities = await db.all(amenityQuery, element.hotel_id);
+    let amenityNames = amenities.map(amen => amen.amenity_name);
+    if (!amenity || amenityNames.includes(amenity)) {
+      let hotel = {
+        'name': element.name,
+        'address': element.address,
+        'description': element.description,
+        'rating': element.rating,
+        'phone_number': element.phone_number,
+        'amenities': amenityNames
       }
+      result.hotels.push(hotel);
     }
-    return hotels;
-  } else {
-    return result;
   }
+  return result;
+}
+
+/**
+ * Reformats the reservations to be more clear and less repetitive.
+ * @param {JSON} result - the reservation data to reformat
+ * @returns {JSON} - the reformatted JSON
+ */
+function formatUserTransactionData(result) {
+  let userTransactions = {'user_id': result[0].user_id, 'reservations': []};
+  for (const element of result) {
+    let reservation = {
+      'reservation_id': element.reservation_id,
+      'room_id': element.room_id,
+      'check_in_date': element.check_in_date,
+      'check_out_date': element.check_out_date,
+      'total_price': element.total_price
+    }
+    userTransactions['reservations'].push(reservation);
+  }
+  return userTransactions;
 }
 
 /**
