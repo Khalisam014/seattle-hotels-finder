@@ -23,10 +23,8 @@ app.use(express.json());
 app.use(multer().none());
 
 const EIGHT_THOUSAND = 8000;
-const ZERO = 0;
-const ONE = 1;
 
-const INVALID_PARAM_ERROR = 400;
+const CLIENT_ERROR = 400;
 const SERVER_ERROR = 500;
 const SERVER_ERROR_MSG = 'An error occurred on the server. Try again later.';
 
@@ -80,10 +78,57 @@ app.get('/login/:username/:password', async (req, res) => {
     if (result) {
       res.type('text').send('Logged in successfully');
     } else {
-      res.status(INVALID_PARAM_ERROR).type('text')
+      res.status(CLIENT_ERROR).type('text')
         .send('Username and password do not exist');
     }
   } catch (err) {
+    res.status(SERVER_ERROR).type('text')
+      .send(SERVER_ERROR_MSG);
+  }
+})
+
+app.get('/transaction', async (req, res) => {
+  try {
+    let reservationID = req.query.reservationID;
+    let userID = req.query.userID;
+    let db = await getDBConnection();
+
+    if (reservationID) {
+      let query = 'SELECT * FROM reservations WHERE reservation_id = ?';
+      let result = await db.get(query, reservationID);
+      if (result) {
+        res.json(result);
+      } else {
+        res.status(CLIENT_ERROR).type('text')
+          .send('No reservation with this ID');
+      }
+    } else if (userID) {
+      let query = 'SELECT * FROM reservations WHERE user_id = ?';
+      let result = await db.all(query, userID);
+      if (result.length > 0) {
+        let userTransactions = {'user_id': result[0].user_id, reservations: []};
+        for (const element of result) {
+          let reservation = {
+            'reservation_id': element.reservation_id,
+            'room_id': element.room_id,
+            'check_in_date': element.check_in_date,
+            'check_out_date': element.check_out_date,
+            'total_price': element.total_price,
+          }
+          userTransactions['reservations'].push(reservation);
+        }
+        res.json(userTransactions);
+      } else {
+        res.status(CLIENT_ERROR).type('text')
+          .send('No users with this ID');
+      }
+    } else {
+      res.status(CLIENT_ERROR).type('text')
+        .send('Bad Request. Please provide a valid reservation ID or user ID.');
+    }
+    await db.close();
+  } catch (err) {
+    console.error(err);
     res.status(SERVER_ERROR).type('text')
       .send(SERVER_ERROR_MSG);
   }
