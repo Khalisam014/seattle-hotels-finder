@@ -52,10 +52,10 @@ app.get('/hotels', async (req, res) => {
   }
 });
 
-app.get('/login/:username/:password', async (req, res) => {
+app.post('/account/login', async (req, res) => {
   try {
-    let username = req.params.username;
-    let password = req.params.password;
+    let username = req.body.username;
+    let password = req.body.password;
     let db = await getDBConnection();
 
     let query = 'SELECT * FROM users WHERE username = ? AND password = ?';
@@ -71,7 +71,40 @@ app.get('/login/:username/:password', async (req, res) => {
     res.status(SERVER_ERROR).type('text')
       .send(SERVER_ERROR_MSG);
   }
-})
+});
+
+app.post('/account/create', async (req, res) => {
+  try {
+    let username = req.body.username;
+    let name = req.body.name;
+    let email = req.body.email;
+    let password = req.body.password;
+    let phone_number = req.body.phone_number;
+    let address = req.body.address;
+
+    if (username && name && email && password && phone_number && address) {
+      let db = await getDBConnection();
+      let prevUsername = db.get('SELECT * FROM users WHERE username = ?', username);
+
+      if (!prevUsername) {
+        let query = 'INSERT INTO users (username, name, email, password, phone_number, address) +'
+          'VALUES (?,?,?,?,?,?)';
+        await db.run(query, username, name, email, password, phone_number, address);
+        res.json({'username': username});
+      } else {
+        res.status(CLIENT_ERROR).type('text')
+          .send('Username already exists');
+      }
+      await db.close();
+    } else {
+      res.status(CLIENT_ERROR).type('text')
+        .send('One or more of the body parameters are missing.');
+    }
+  } catch (err) {
+    res.status(SERVER_ERROR).type('text')
+      .send(SERVER_ERROR_MSG);
+  }
+});
 
 app.get('/transaction', async (req, res) => {
   try {
@@ -104,6 +137,38 @@ app.get('/transaction', async (req, res) => {
     }
     await db.close();
   } catch (err) {
+    res.status(SERVER_ERROR).type('text')
+      .send(SERVER_ERROR_MSG);
+  }
+});
+
+app.post('/reserve', async (req, res) => {
+  try {
+    let user_id = req.body.user_id;
+    let room_id = req.body.room_id;
+    let check_in_date = req.body.check_in_date;
+    let check_out_date = req.body.check_out_date;
+
+    if (user_id && room_id && check_in_date && check_out_date) {
+      let db = await getDBConnection();
+      let errorText = await isReservationValid(db, user_id, room_id, check_in_date, check_out_date);
+      if (errorText === '') {
+        let total_price = await findTotalPrice(db, room_id, check_in_date, check_out_date);
+        let query = 'INSERT INTO reservations (user_id, room_id, check_in_date, check_out_date,' +
+          'total_price) VALUES (?,?,?,?,?)';
+        let result = await db.run(query, user_id, room_id, check_in_date, check_out_date, total_price);
+        res.json({'reservation_id': result.lastID, 'total_price': total_price});
+      } else {
+        res.status(CLIENT_ERROR).type('text')
+          .send(errorText);
+      }
+      await db.close();
+    } else {
+      res.status(CLIENT_ERROR).type('text')
+        .send('One or more of the body parameters are missing.');
+    }
+  } catch (err) {
+    console.error(err);
     res.status(SERVER_ERROR).type('text')
       .send(SERVER_ERROR_MSG);
   }
@@ -179,6 +244,72 @@ function formatUserTransactionData(result) {
     userTransactions['reservations'].push(reservation);
   }
   return userTransactions;
+}
+
+/**
+ * Checks if the rooms isn't already reserved and if the user doesn't have
+ * overlapping reservations. Returns the error message if needed, otherwise
+ * empty string.
+ * @param {Object} db - the database object for the connection
+ * @param {Number} user_id - the user's id
+ * @param {Number} room_id - the id of the room that is trying to be reserved.
+ * @param {Date} check_in_date - the check in date trying to be reserved
+ * @param {Date} check_out_date - the check out date trying to be reserved
+ * @returns {String} - the error message, otherwise empty string.
+ */
+async function isReservationValid(db, user_id, room_id, check_in_date, check_out_date) {
+  let roomExists = await db.get('SELECT * FROM rooms WHERE room_id = ?', room_id);
+  if (!roomExists) {
+    return 'This room does not exist.';
+  }
+
+  let roomQuery = `
+    SELECT * FROM reservations
+    WHERE room_id = ?
+    AND (
+      (check_in_date < ? AND check_out_date > ?) OR
+      (check_in_date < ? AND check_out_date > ?) OR
+      (check_in_date >= ? AND check_out_date <= ?)
+    )`;
+  let roomAvailable = await db.get(roomQuery, room_id, check_out_date,
+    check_in_date, check_out_date, check_in_date, check_in_date, check_out_date);
+  console.log(roomAvailable);
+  if (roomAvailable) {
+    return 'This room is already reserved';
+  }
+
+  let userQuery = 'SELECT check_in_date, check_out_date FROM reservations WHERE user_id = ?';
+  let results = await db.all(userQuery, user_id);
+
+  for (let element of results) {
+    if ((element.check_in_date <= check_out_date && element.check_out_date >= check_in_date) ||
+        (element.check_in_date <= check_out_date && element.check_out_date >= check_in_date) ||
+        (element.check_in_date >= check_in_date && element.check_out_date <= check_out_date)) {
+      return 'You have an overlapping reservation';
+    }
+  }
+
+  return '';
+}
+
+/**
+ * Calculates and returns the total price for the reservation.
+ * @param {Object} db - the database object for the connect
+ * @param {Number} room_id - the room to check price for
+ * @param {Date} check_in_date - the check in date for the reservation
+ * @param {Date} check_out_date - the check out date for the reservation
+ * @returns {Number} - the total price for the reservation
+ */
+async function findTotalPrice(db, room_id, check_in_date, check_out_date) {
+  let query = 'SELECT price_per_night FROM rooms WHERE room_id = ?';
+  let result = await db.get(query, room_id);
+
+  let checkInDate = new Date(check_in_date);
+  let checkOutDate = new Date(check_out_date);
+  let timeDifference = checkOutDate - checkInDate;
+  let days = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+
+  return days * result.price_per_night;
 }
 
 /**

@@ -2,19 +2,13 @@
 This API manages the backend of the application. It will retrieve the hotels and their details from the database using SQL queries. It will also retrieve the login information of the user.
 
 ## Retrieve Hotel Information
-**Request Format:**  `/hotels` with optional parameters of `name`,  `amenity`, and `rating`.
+**Request Format:**  `/hotels` with optional parameters of `name`,  `amenity`, and `rating`. \
+**Request Type:** GET \
+**Returned Data Format**: JSON \
+**Description:** This endpoint will be used to retrieve hotel information, whether it is all the hotels or a specific one. There will be parameters to filter the hotels. It will be achieving feature 1’s goal of  an “Endpoint to retrieve all items”, feature 3’s an “Endpoint to retrieve detailed item information”, and feature 5’s “Endpoint to search database and return results”. Excluding any parameters will return all the hotels and their information. Using the parameter `name={name}` will return hotels that match that name, using the parameter `amenity={amenity}` will return hotels with that amenity, and using the parameter `rating={rating}` will return hotels with a rating greater than the number provided. \
 
-**Request Type:** GET
-
-**Returned Data Format**: JSON
-
-**Description:** This endpoint will be used to retrieve hotel information, whether it is all the hotels or a specific one. There will be parameters to filter the hotels. It will be achieving feature 1’s goal of  an “Endpoint to retrieve all items”, feature 3’s an “Endpoint to retrieve detailed item information”, and feature 5’s “Endpoint to search database and return results”. Excluding any parameters will return all the hotels and their information. Using the parameter `name={name}` will return hotels that match that name, using the parameter `amenity={amenity}` will return hotels with that amenity, and using the parameter `rating={rating}` will return hotels with a rating greater than the number provided.
-
-
-**Example Request:**  `/hotels`
-
-**Example Response:**
-
+**Example Request #1:**  `/hotels` \
+**Example Response #1:**
 ```json
 {
   "hotels": [
@@ -66,9 +60,8 @@ This API manages the backend of the application. It will retrieve the hotels and
 
 ```
 
-**Example Request #2:**  `/hotels?amenity=pool&rating=4.1`
-
-**Example Response#2:**
+**Example Request #2:**  `/hotels?amenity=pool&rating=4.1` \
+**Example Response #2:**
 ```json
 {
   "hotels": [
@@ -105,8 +98,7 @@ This API manages the backend of the application. It will retrieve the hotels and
 }
 ```
 
-**Example Request #3:**  `/hotels?name=Motif Seattle`
-
+**Example Request #3:**  `/hotels?name=Motif Seattle` \
 **Example Response#3:**
 ```json
 {
@@ -128,45 +120,51 @@ This API manages the backend of the application. It will retrieve the hotels and
   ]
 }
 ```
-
 **Error Handling:**
 * If the user provides an invalid parameter, a response with a 400 status code and a message of “Invalid parameter name” will be returned.
 * If a server error occurs, a response with a 500 status code and a message of “An error occurred on the server. Try again later.” will be returned.
 
 
 ## Log in
-**Request Format:**  `/login/:username/:password`
-
-**Request Type:** GET
-
-**Returned Data Format**: JSON
-
-**Description:**  The endpoint confirms if the account with that `username` and `password` exists in the database, if so a success message will be returned. This endpoint essentially logs the user in. It will be achieving feature 2’s goal of an “Endpoint to check if the username and password match an entry in the database.”
-
-
-**Example Request:** `login/user1/password123!`
-
+**Request Format:**  `/account/login` with body parameters of `username` and `password` \
+**Request Type:** POST \
+**Returned Data Format**: Text \
+**Description:**  The endpoint confirms if the account with that `username` and `password` exists in the database, if so a success message will be returned. This endpoint essentially logs the user in. It will be achieving feature 2’s goal of an “Endpoint to check if the username and password match an entry in the database.” \
+**Example Request:** `/account/login` \
 **Example Response:**
-
+``` json
 ‘Logged in successfully’
-
+```
 
 **Error Handling:**
 * If the user provides an incorrect `username` and `password` combination, a response with status code 200 and the message ‘Username and password don’t exist’ will be returned.
 * If a server error occurs, a response with a 500 status code and a message of “An error occurred on the server. Try again later.” will be returned.
 
+## Create a new account
+**Request Format:**  `/account/create` with body parameters of `username`, `name`, `email`, `password`, `phone_number`, and `address`. \
+**Request Type:** POST \
+**Returned Data Format**: JSON \
+**Description:**  Creates a new user account based on the information provided. \
+**Example Request:** `/account/create` \
+**Example Response:** \
+``` json
+{
+  "username": "janedoe"
+}
+```
+**Error Handling:**
+* If the user doesn't provide all the required body parameters, a response with a 400 status code and a message of "One or more of the body parameters are missing." will be returned.
+* If the `username` provided already exists, a response with a 400 status code and a message of "Username already exists." will be returned.
+* If a server error occurs, a response with a 500 status code and a message of “An error occurred on the server. Try again later.” will be returned.
+
 
 ## Transactions
-**Request Format:** `/transaction`  with optional parameters of `reservationID` OR `userID`.
-
-**Request Type:** GET
-
+**Request Format:** `/transaction`  with optional parameters of `reservationID` OR `userID`. \
+**Request Type:** GET \
 **Returned Data Format**: JSON
 
-**Description 1:** Retrieves the details of a reservation based on the provided `reservationID`.
-
-**Example Request 1:** `/transaction?reservationID=1`
-
+**Description 1:** Retrieves the details of a reservation based on the provided `reservationID`. \
+**Example Request 1:** `/transaction?reservationID=1` \
 **Example Response 1:**
 ```json
 {
@@ -178,11 +176,8 @@ This API manages the backend of the application. It will retrieve the hotels and
   "total_price": 800
 }
 ```
-
-**Description 2:** Retrieves the details of a reservation based on the provided `reservationID`.
-
-**Example Request 2:** `/transaction?userID=1`
-
+**Description 2:** Retrieves the details of a reservation based on the provided `reservationID`. \
+**Example Request 2:** `/transaction?userID=1` \
 **Example Response 2:**
 ```json
 {
@@ -205,10 +200,28 @@ This API manages the backend of the application. It will retrieve the hotels and
   ]
 }
 ```
-
 **Error Handling:**
 * If the user doesn't provide a `reservationID` or `userID`,a response with a 400 status code and a message of "Bad Request. Please provide a valid reservation ID or user ID." will be returned.
 * If the user provides an invalid `reservationID`, a response with a 400 status code and a message of "No reservation with this ID" will be returned.
 * If the user provides an invalid `userID`, a response with a 400 status code and a message of "No users with this ID" will be returned.
 * If a server error occurs, a response with a 500 status code and a message of “An error occurred on the server. Try again later.” will be returned
 
+## Make Reservation
+**Request Format:**  `/reserve` with body parameters of `user_id`, `room_id`, `check_in_date`, `check_out_date`, and `total_price`. \
+**Request Type:** POST \
+**Returned Data Format**: JSON \
+**Description:** Reserves the room for the logged in user. Checks if the room is available for those dates and if the user doesn't have any overlapping reservations. \
+**Example Request:** `/reserve` with body parameters `"user_id": 1`, `"room_id": 14`, `"check_in_date": 2024-08-15`, `"check_out_date": 2024-08-16` \
+**Example Response:** \
+``` json
+{
+  "reservation_id": 7,
+  "total_price": 240
+}
+```
+**Error Handling:**
+* If the user doesn't provide all the required body parameters, a response with a 400 status code and a message of "One or more of the body parameters are missing." will be returned.
+* If the `room_id` provided doesn't exists, a response with a 400 status code and a message of "This room does not exist." will be returned.
+* If the `room_id` is already reserved for the provided dates, a response with a 400 status code and a message of "This room is already reserved" will be returned.
+* If the `user_id` has an overlapping reservation a response with a 400 status code and a message of "You have an overlapping reservation" will be returned.
+* If a server error occurs, a response with a 500 status code and a message of “An error occurred on the server. Try again later.” will be returned.
