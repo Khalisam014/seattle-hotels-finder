@@ -22,7 +22,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(multer().none());
 
-const EIGHT_THOUSAND = 8000;
+const EIGHT_THOUSAND = 5501;
 
 const CLIENT_ERROR = 400;
 const SERVER_ERROR = 500;
@@ -74,6 +74,7 @@ app.post('/account/login', async (req, res) => {
 });
 
 app.post('/account/create', async (req, res) => {
+  console.log(req.body);
   try {
     let username = req.body.username;
     let name = req.body.name;
@@ -84,15 +85,17 @@ app.post('/account/create', async (req, res) => {
 
     if (username && name && email && password && phone_number && address) {
       let db = await getDBConnection();
-      let prevUsername = db.get('SELECT * FROM users WHERE username = ?', username);
-
+      let prevUsername = await db.get('SELECT * FROM users WHERE username = ?', username);
+      if (prevUsername) {
+        return res.status(400).send('Username already exists');
+      }
       if (!prevUsername) {
-        let query = 'INSERT INTO users (username, name, email, password, phone_number, address) +'
+        let query = 'INSERT INTO users (username, name, email, password, phone_number, address) ' +
           'VALUES (?,?,?,?,?,?)';
         await db.run(query, username, name, email, password, phone_number, address);
         res.json({'username': username});
-      } else {
-        res.status(CLIENT_ERROR).type('text')
+       } else {
+         res.status(CLIENT_ERROR).type('text')
           .send('Username already exists');
       }
       await db.close();
