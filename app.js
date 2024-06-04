@@ -359,9 +359,9 @@ async function findTotalPrice(db, roomId, checkInDate, checkOutDate) {
   let query = 'SELECT price_per_night FROM rooms WHERE room_id = ?';
   let result = await db.get(query, roomId);
 
-  let checkInDate = new Date(checkInDate);
-  let checkOutDate = new Date(checkOutDate);
-  let timeDifference = checkOutDate - checkInDate;
+  let checkInDateOne = new Date(checkInDate);
+  let checkOutDateOne = new Date(checkOutDate);
+  let timeDifference = checkOutDateOne - checkInDateOne;
   let days = Math.ceil(timeDifference / (ONE_THOUSAND * SIX_TY * SIX_TY * TWENTY_FOUR));
 
   return days * result.price_per_night;
