@@ -55,7 +55,6 @@
       signOutLink.addEventListener('click', signOut);
       slides = document.getElementsByClassName("slide");
       initSlideshow();
-      setupSlideshowEvents();
     }
 
     if (loginForm) {
@@ -201,15 +200,6 @@
   function showSlides() {
     Array.from(slides).forEach(slide => slide.style.opacity = '0');
     slides[slideIndex].style.opacity = '1';
-  }
-
-  /**
-   * This function is in charge of setting up the slideshow on the main page
-   */
-  function setupSlideshowEvents() {
-    const slideshowContainer = id('slideshow');
-    slideshowContainer.onmouseover = () => clearInterval(slideInterval);
-    slideshowContainer.onmouseout = () => slideInterval = setInterval(nextSlide, SIX_SECONDS);
   }
 
   /**
