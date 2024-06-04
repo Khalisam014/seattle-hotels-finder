@@ -152,15 +152,15 @@ app.post('/reserve', async (req, res) => {
     let checkIn = req.body.check_in_date;
     let checkOut = req.body.check_out_date;
 
-    if (userId && roomId && checkIn && check_out_date) {
+    if (userId && roomId && checkIn && checkOut) {
       let db = await getDBConnection();
-      let errorText = await isReservationValid(db, userId , roomId, checkIn, checkOut);
+      let errorText = await isReservationValid(db, userId, roomId, checkIn, checkOut);
       if (errorText === '') {
-        let total_price = await findTotalPrice(db, roomId, checkIn, checkOut);
+        let totalPrice = await findTotalPrice(db, roomId, checkIn, checkOut);
         let query = 'INSERT INTO reservations (user_id, room_id, check_in_date, check_out_date,' +
           'total_price) VALUES (?,?,?,?,?)';
-        let result = await db.run(query, userId, roomId, checkIn, checkOut, total_price);
-        res.json({'reservation_id': result.lastID, 'total_price': total_price});
+        let result = await db.run(query, userId, roomId, checkIn, checkOut, totalPrice);
+        res.json({'reservation_id': result.lastID, 'total_price': totalPrice});
       } else {
         res.status(CLIENT_ERROR).type('text')
           .send(errorText);
@@ -321,7 +321,7 @@ async function isReservationValid(db, userId, roomId, checkInDate, checkOutDate)
   if (!roomExists) {
     return 'This room does not exist.';
   }
-  if (await roomQuery(db, checkInDate, checkOutDate)) {
+  if (await findRoomQuery(db, checkInDate, checkOutDate, roomId)) {
     return 'This room is already reserved';
   }
   if (userId !== undefined) {
@@ -345,8 +345,8 @@ async function isReservationValid(db, userId, roomId, checkInDate, checkOutDate)
  * @param {Date} checkOutDate - the check out date for the reservation
  * @returns {Object} - returns the room if there is overlapping time.
  */
-async function roomQuery(db, checkInDate, checkOutDate) {
-  let roomQuery =`
+async function findRoomQuery(db, checkInDate, checkOutDate, roomId) {
+  let roomQuery = `
   SELECT * FROM reservations
   WHERE room_id = ?
   AND (

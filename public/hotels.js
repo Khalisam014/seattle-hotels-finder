@@ -241,7 +241,6 @@
       body.append('room_id', roomId);
       body.append('check_in_date', selectedCheckIn);
       body.append('check_out_date', selectedCheckOut);
-      console.log(body);
       fetch('/reserve', {
         method: 'POST',
         body: body
@@ -255,6 +254,10 @@
     }
   }
 
+  /**
+   * Displays the total price in a pop up after the reservation is complete.
+   * @param {Number} data - the total price
+   */
   function displayPrice(data) {
     qs('#price-container p').textContent = '$' + data.total_price + ' total';
     id('price-overlay').classList.add('overlay');
@@ -302,7 +305,6 @@
    * @param {Object} data - the hotel information
    */
   function displayMoreInfo(data) {
-    console.log(data);
     qs('#hotel-container h2').textContent = data.hotels[0].name;
     id('description').textContent = data.hotels[0].description;
     id('address').textContent = data.hotels[0].address;
