@@ -1,21 +1,13 @@
-<!--
-  Name: Cadence Lamphiear & Sama Khalid
-  Date: May 3, 2024
-  Section: AD Max & Allan
-  This is the login HTML. It is only used for the login page, it has
-  a username and password input.
--->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="index.js"></script>
-  <link href="login.css" rel="stylesheet">
   <link href="styles.css" rel="stylesheet">
-
-  <title>Log in</title>
+  <link href="account.css" rel="stylesheet">
+  <script src="account.js"></script>
+  <script src="index.js"></script>
+  <title>Account</title>
 </head>
 <body>
   <header class="flex-row space-between">
@@ -37,22 +29,32 @@
       </div>
     </div>
   </header>
-  <div id="login-container">
-    <h2>Login</h2>
-    <form id="login-form">
-      <div class="input-container">
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" required>
+  <main>
+    <section id="account-info">
+      <h2>Account Information</h2>
+      <div id="user-details">
+        <div class="info-container">
+          <label>Username:</label>
+          <div id="account-username"></div>
+        </div>
+        <div class="info-container">
+          <label>Email:</label>
+          <div id="account-email"></div>
+        </div>
+        <div class="info-container">
+          <label>Name:</label>
+          <div id="account-name"></div>
+        </div>
+        <div class="info-container">
+          <label>Phone Number:</label>
+          <div id="account-phone"></div>
+        </div>
+        <div class="info-container">
+          <label>Address:</label>
+          <div id="account-address"></div>
+        </div>
       </div>
-      <div class="input-container">
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" required>
-      </div>
-      <div class="create-account">
-        <a href="create.html"> Create Account </a>
-      </div>
-      <button type="submit">Login</button>
-    </form>
-  </div>
+    </section>
+  </main>
 </body>
 </html>
