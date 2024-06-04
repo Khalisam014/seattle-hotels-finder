@@ -180,6 +180,7 @@
    * This function is in charge of setting the interval for how long
    * the slideshow takes before changing the slide.
    * @param {number} interval - The interval for the slideshow in milliseconds.
+   * @returns {any} The interval for the slideshow in milliseconds
    */
   function initSlideshow(interval) {
     interval = setInterval(nextSlide, SIX_SECONDS);
