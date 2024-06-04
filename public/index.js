@@ -27,6 +27,11 @@
   function init() {
     setupPage();
     updateGreeting();
+
+    id('close-btn').addEventListener('click', () => {
+      id('popup-overlay').classList.remove('overlay');
+      id('popup-container').classList.add('hidden');
+    });
   }
 
   /**
@@ -157,6 +162,7 @@
       .then(result => {
         if (result.username) {
           sessionStorage.setItem('username', formData.get('username'));
+          sessionStorage.setItem('user_id', result.user_id);
           location.assign('/index.html');
         } else {
           console.error('Account creation failed: ' + result);

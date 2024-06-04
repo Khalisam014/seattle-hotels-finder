@@ -160,7 +160,7 @@ header a:hover:after {
   margin-top: 130px;
 }
 
-#search-bar>div {
+#search-bar > div {
   width: 50%;
   height: 100%;
   gap: 10px;

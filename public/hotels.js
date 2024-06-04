@@ -198,7 +198,7 @@
     selectedCheckIn = checkIn;
     selectedCheckOut = checkOut;
     selectedTravelers = travelers;
-    getHotels(selectedAmenity, checkIn, checkOut, travelers);
+    getHotels(selectedAmenity, checkIn, checkOut);
   }
 
   /**
@@ -217,7 +217,8 @@
           getHotels();
         } else {
           amenities.forEach(amen => id(amen).classList.remove('clicked'));
-          selectedAmenity = amenity.replace('-', ' ').replace(/\b\w/g, letter => letter.toUpperCase());
+          selectedAmenity = amenity.replace('-', ' ')
+            .replace(/\b\w/g, letter => letter.toUpperCase());
           element.classList.add('clicked');
           getHotels(selectedAmenity, selectedCheckIn, selectedCheckOut, selectedTravelers);
         }
@@ -363,4 +364,4 @@
   function gen(tagName) {
     return document.createElement(tagName);
   }
-})()
+})();

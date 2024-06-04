@@ -250,7 +250,7 @@ async function organizeHotelData(db, hotels, amenity, checkIn, checkOut) {
     let availableRooms = [];
     if (checkIn && checkOut) {
       for (let room of rooms) {
-        if (await isReservationValid(db, undefined, room.roomId, checkIn, checkOut) === '') {
+        if (await isReservationValid(db, undefined, room.room_id, checkIn, checkOut) === '') {
           availableRooms.push(room);
         }
       }
@@ -321,18 +321,24 @@ async function isReservationValid(db, userId, roomId, checkInDate, checkOutDate)
   if (!roomExists) {
     return 'This room does not exist.';
   }
-
-  let roomQuery = `SELECT * FROM reservations WHERE room_id = ? AND (
-      (check_in_date == ? AND check_out_date == ?) OR
-      (check_in_date < ? AND check_out_date > ?) OR
-      (check_in_date <= ? AND check_out_date >= ?) OR
-      (check_in_date < ? AND check_out_date >= ?))`;
-  let roomAvailable = await db.get(roomQuery, roomId, checkInDate, checkOutDate,
-    checkInDate, checkOutDate, checkInDate, checkInDate, checkOutDate, checkOutDate);
+  let roomQuery = `SELECT * FROM reservations WHERE room_id = ? AND ((check_in_date == ? AND
+      check_out_date == ?) OR (check_in_date < ? AND check_out_date > ?) OR (check_in_date
+      <= ? AND check_out_date >= ?) OR (check_in_date < ? AND check_out_date >= ?))`;
+  let roomAvailable = await db.get(
+    roomQuery,
+    roomId,
+    checkInDate,
+    checkOutDate,
+    checkInDate,
+    checkOutDate,
+    checkInDate,
+    checkInDate,
+    checkOutDate,
+    checkOutDate
+  );
   if (roomAvailable) {
     return 'This room is already reserved';
   }
-
   if (userId !== undefined) {
     let userQuery = 'SELECT check_in_date, check_out_date FROM reservations WHERE user_id = ?';
     let results = await db.all(userQuery, userId);
