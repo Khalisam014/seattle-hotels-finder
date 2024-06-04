@@ -103,9 +103,9 @@ app.post('/account/create', async (req, res) => {
           'VALUES (?,?,?,?,?,?)';
         await db.run(query, username, name, email, password, phoneNumber, address);
         res.json({'username': username});
-       } else {
+      } else {
         res.status(CLIENT_ERROR).type('text')
-        .send('Username already exists');
+          .send('Username already exists');
       }
       await db.close();
     } else {
@@ -220,6 +220,8 @@ app.get('/account/:username', async (req, res) => {
  * @param {String} name - the hotel name
  * @param {String} amenity - the amenity to find
  * @param {Number} rating - the rating that the hotel must have more than
+ * @param {Date} checkIn - the check in date
+ * @param {Date} checkOut - the check out date
  * @returns {JSON} - the json to be sent back
  */
 async function getFilteredResult(db, name, amenity, rating, checkIn, checkOut) {
@@ -243,6 +245,8 @@ async function getFilteredResult(db, name, amenity, rating, checkIn, checkOut) {
  * @param {Object} db - the database object for the connection
  * @param {JSON} hotels - an object array of hotels and their inforamtion
  * @param {String} amenity - the amenity to filter by, if needed, otherwise undefined
+ * @param {Date} checkIn - the check in date
+ * @param {Date} checkOut - the check out date
  * @returns {JSON} - the organized JSON of the hotels
  */
 async function organizeHotelData(db, hotels, amenity, checkIn, checkOut) {
