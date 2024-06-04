@@ -120,11 +120,12 @@
         if (!response.ok) {
           throw new Error('Network response was not ok. Status: ' + response.status);
         }
-        return response.text();
+        return response.json();
       })
-      .then(text => {
-        if (text.includes("successfully")) {
+      .then(data => {
+        if (data.includes("successfully")) {
           sessionStorage.setItem('username', formData.get('username'));
+          sessionStorage.setItem('user_id', data.user_id);
           updateGreeting();
           location.assign('/index.html');
         }

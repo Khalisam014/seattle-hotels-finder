@@ -12,26 +12,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="styles.css" rel="stylesheet">
+  <link href="hotels.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
   <title>Hotel App</title>
   <script src="index.js"></script>
+  <script src="hotels.js"></script>
 </head>
 <body>
   <header class="flex-row space-between">
     <a href="index.html"><h1> Seattle Hotels</h1></a>
     <div id="nav-items" class="flex-row space-between">
       <a href="#browse">Browse</a>
-      <a href="#map">Map</a>
-      <a href="#attractions">Attractions</a>
+      <a>Map</a>
+      <a>Attractions</a>
     </div>
-    <span id="user-greeting"></span>
+
     <div id="icons" class="flex-row space-evenly">
-      <img src="/img/user.png" alt="Dropdown Icon" id="profile-icon"> <!-- Icon from Flaticon by Chanut -->
-      <img src="/img/heart.png" alt="Favorites icon"> <!-- Icon from Flaticon by Chanut -->
+      <span id="user-greeting"></span>
+      <img src="img/user.png" alt="Dropdown Icon" id="profile-icon"> <!-- Icon from Flaticon by Chanut -->
+      <img src="img/heart.png" alt="Favorites icon"> <!-- Icon from Flaticon by Chanut -->
       <div class="dropdown-menu">
-        <a href="account.html">Account</a>
+        <a href="#">Account</a>
         <a href="#">My Trips</a>
-        <a href="aboutus.html">About us</a>
+        <a href="#">About us</a>
         <a href="#" id="sign-out-link">Sign out</a>
       </div>
     </div>
@@ -61,113 +64,97 @@
     <section id="browse">
       <article id="search-bar" class="flex-row">
         <div class="flex-row">
-          <img src="/img/calendar.png" alt="Calendar icon"> <!-- Icon from Flaticon by Freepik -->
+          <img src="img/calendar.png" alt="Calendar icon"> <!-- Icon from Flaticon by Freepik -->
           <div>
             <p>Dates</p>
-            <input type="date" id="start-date">
-            <input type="date" id="end-date">
+            <input type="date" id="start-date" required>
+            <input type="date" id="end-date" required>
           </div>
         </div>
         <div class="flex-row">
-          <img src="/img/group.png" alt="Group icon"> <!-- Icon from Flaticon by Chanut -->
+          <img src="img/group.png" alt="Group icon"> <!-- Icon from Flaticon by Chanut -->
           <div>
             <p>Traveler(s)</p>
-            <input type="number" id="travelers">
-            <label for="travelers">Traveler(s),</label>
-            <input type="number" id="rooms">
-            <label for="rooms">Room(s)</label>
+            <input type="number" id="travelers" required>
+            <label for="travelers">Traveler(s)</label>
           </div>
         </div>
         <button> Search </button>
       </article>
+      <article id="searching">
+        <input type="search" id="search" placeholder="Search for a Hotel...">
+        <button>Search</button>
+      </article>
       <article id="category-bar">
         <h2>Browse By Category </h2>
         <div class="flex-row-two">
-          <div class="category">
-            <img src="/img/veterinary.png" alt="paw icon"> <!-- Icon from Flaticon by Chanut -->
+          <div class="category" id="pet-friendly">
+            <img src="img/veterinary.png" alt="paw icon"> <!-- Icon from Flaticon by Chanut -->
             <span>Pet Friendly</span>
           </div>
-          <div class="category">
-            <img src="/img/family.png" alt="family icon"> <!-- Icon from Flaticon by Chanut -->
+          <div class="category" id="family-friendly">
+            <img src="img/family.png" alt="family icon"> <!-- Icon from Flaticon by Chanut -->
             <span>Family Friendly</span>
           </div>
-          <div class="category">
-            <img src="/img/hot-tub.png" alt="hot tub icon"> <!-- Icon from Flaticon by Chanut -->
+          <div class="category" id="hot-tub">
+            <img src="img/hot-tub.png" alt="hot tub icon"> <!-- Icon from Flaticon by Chanut -->
             <span>Hot Tub</span>
           </div>
-          <div class="category">
-            <img src="/img/swimming.png" alt="swimming icon"> <!-- Icon from Flaticon by Chanut -->
+          <div class="category" id="pool">
+            <img src="img/swimming.png" alt="swimming icon"> <!-- Icon from Flaticon by Chanut -->
             <span>Pool</span>
           </div>
-          <div class="category">
-            <img src="/img/all-inclusive.png" alt="swimming icon"> <!-- Icon from Flaticon by Chanut -->
-            <span>All inclusive</span>
-          </div>
-          <div class="category">
-            <img src="/img/facial-massage.png" alt="spa icon"> <!-- Icon from Flaticon by Chanut -->
+          <div class="category" id="spa">
+            <img src="img/facial-massage.png" alt="spa icon"> <!-- Icon from Flaticon by Chanut -->
             <span>Spa</span>
           </div>
-          <div class="category">
-            <img src="/img/parking.png" alt="parking icon"> <!-- Icon from Flaticon by Chanut -->
+          <div class="category" id="free-parking">
+            <img src="img/parking.png" alt="parking icon"> <!-- Icon from Flaticon by Chanut -->
             <span>Free Parking</span>
           </div>
-          <div class="category">
-            <img src="/img/english-breakfast.png" alt="breakfast icon"> <!-- Icon from Flaticon by Chanut -->
+          <div class="category" id="breakfast">
+            <img src="img/english-breakfast.png" alt="breakfast icon"> <!-- Icon from Flaticon by Chanut -->
             <span>Breakfast</span>
           </div>
-          <div class="category">
-            <img src="/img/valet.png" alt="valet icon"> <!-- Icon from Flaticon by Chanut -->
+          <div class="category" id="valet-parking">
+            <img src="img/valet.png" alt="valet icon"> <!-- Icon from Flaticon by Chanut -->
             <span>Valet</span>
           </div>
         </div>
       </article>
     </section>
-    <section id="attractions">
-      <div class="title">
-        <h2> Seattle Attractions</h2>
-      </div>
-      <div class="attractions-container">
-      <!-- images: https://visitseattle.org/things-to-do/sightseeing/top-25-attractions/ -->
-        <div class="attraction">
-          <img src="/img/seattle_needle.png" alt="Seattle Space Needle">
-          <a href="https://www.spaceneedle.com/">Space Needle </a>
-        </div>
-        <div class="attraction">
-          <img src="/img/pioneer_square.png" alt="Seattle Space Needle">
-          <a href="https://www.pioneersquare.org/">Pioneer Square</a>
-        </div>
-        <div class="attraction">
-          <img src="/img/aquarium.png" alt="Seattle Space Needle">
-          <a href="https://www.seattleaquarium.org/">Seattle Aquarium</a>
-        </div>
-        <div class="attraction">
-          <img src="/img/seattle_monorail.png" alt="Seattle Space Needle">
-          <a href="https://www.seattlemonorail.com/">Seattle Monorail</a>
-        </div>
-        <div class="attraction">
-          <img src="/img/museum.png" alt="Seattle Space Needle">
-          <a href="https://www.mopop.org/">Museum of Pop Culture</a>
-        </div>
-        <div class="attraction">
-          <img src="/img/great_wheel.png" alt="Seattle Space Needle">
-          <a href="https://seattlegreatwheel.com/">Seattle Great Wheel </a>
-        </div>
-        <div class="attraction">
-          <img src="/img/lumen_field.png" alt="Seattle Space Needle">
-          <a href="https://www.mlb.com/mariners/ballpark">T-Mobile Park and Lumen Field (Get Tickets!)</a>
-        </div>
-        <div class="attraction">
-          <img src="/img/garden.png" alt="Seattle Space Needle">
-          <a href="https://www.chihulygardenandglass.com/">Chihuly Garden and Glass</a>
-        </div>
-      </div>
+    <div class="icons">
+      <img src="img/list.png" alt="list icon" class="icon hidden" id="list-icon"><!-- icon by GOFOX -->
+      <img src="img/menu.png" alt="menu icon" class="icon" id="menu-icon"><!-- icon by Freepik -->
+    </div>
+    <section id="hotels">
     </section>
-    <section id="map">
-      <h1> To Be Continued...</h1>
-    </section>
+
+    <div id="hotel-overlay" class="">
+      <div id="hotel-container" class="">
+        <h2></h2>
+        <div>
+          <div>
+            <p id="description">.</p>
+            <p id="address"></p>
+            <p id="phone-number"></p>
+          </div>
+          <ul>
+          </ul>
+        </div>
+        <button>Close</button>
+      </div>
+    </div>
+
+    <div id="popup-overlay">
+      <div id="popup-container" class="hidden">
+        <h2>Error</h2>
+        <p id="error-text"></p>
+        <button id="close-btn">Close</button>
+      </div>
+    </div>
   </main>
   <footer>
   </footer>
 </body>
 </html>
-

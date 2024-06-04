@@ -1,0 +1,92 @@
+/*
+ * Name: Cadence Lamphiear and Sama Khalid
+ * Date: May 30, 2024
+ * Section: AD Max & Allan
+ *
+ * This is the styling for the hotel cards.
+ */
+.hotel-menu,
+#hotels article,
+#hotels article>div,
+.rating-price {
+  display: flex;
+  flex-direction: row;
+}
+
+#hotels {
+  margin-bottom: 20px;
+  width: 90%;
+  margin: auto;
+}
+
+.hotel-menu {
+  flex-wrap: wrap;
+}
+
+#hotels article {
+  border: 1px solid gray;
+  box-shadow: 0px 2px 5px rgba(126, 126, 126, 0.1);
+  border-radius: 15px;
+  min-height: 30vh;
+  margin: 15px auto;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.article-list {
+  width: 90%;
+}
+
+.article-menu {
+  width: 30%;
+  margin: auto 10vw;
+}
+
+#hotels article:hover {
+  box-shadow: 0px 2px 8px rgba(126, 126, 126, 0.6);
+}
+
+#hotels img {
+  width: 25%;
+  object-fit: cover;
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;
+}
+
+#hotels article>div {
+  padding: 10px;
+  flex-direction: column;
+  width: 100%;
+}
+
+.hotel-info p {
+  color: gray;
+  margin-bottom: 5px;
+}
+
+.hotel-info span {
+  font-weight: 600;
+}
+
+.rating-price,
+#hotels article>div {
+  justify-content: space-between;
+}
+
+.rating-price {
+  align-items: end;
+}
+
+.rating-price>p span {
+  border-radius: 5px;
+  background-color: #57b777;
+  padding: 4px;
+  font-weight: 800;
+}
+
+.rating-price div>p span {
+  font-weight: 700;
+}
+
+.rating-price div {
+  text-align: center;
+}

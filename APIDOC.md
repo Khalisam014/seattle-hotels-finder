@@ -2,10 +2,10 @@
 This API manages the backend of the application. It will retrieve the hotels and their details from the database using SQL queries. It will also retrieve the login information of the user.
 
 ## Retrieve Hotel Information
-**Request Format:**  `/hotels` with optional parameters of `name`,  `amenity`, and `rating`. \
+**Request Format:**  `/hotels` with optional parameters of `name`,  `amenity`, `rating`, `check_in`, and `check_out`. \
 **Request Type:** GET \
 **Returned Data Format**: JSON \
-**Description:** This endpoint will be used to retrieve hotel information, whether it is all the hotels or a specific one. There will be parameters to filter the hotels. It will be achieving feature 1’s goal of  an “Endpoint to retrieve all items”, feature 3’s an “Endpoint to retrieve detailed item information”, and feature 5’s “Endpoint to search database and return results”. Excluding any parameters will return all the hotels and their information. Using the parameter `name={name}` will return hotels that match that name, using the parameter `amenity={amenity}` will return hotels with that amenity, and using the parameter `rating={rating}` will return hotels with a rating greater than the number provided. \
+**Description:** This endpoint will be used to retrieve hotel information, whether it is all the hotels or a specific one. There will be parameters to filter the hotels. It will be achieving feature 1’s goal of  an “Endpoint to retrieve all items”, feature 3’s an “Endpoint to retrieve detailed item information”, and feature 5’s “Endpoint to search database and return results”. Excluding any parameters will return all the hotels and their information. Using the parameter `name={name}` will return hotels that match that name, using the parameter `amenity={amenity}` will return hotels with that amenity, and using the parameter `rating={rating}` will return hotels with a rating greater than the number provided. The parameters `check_in` and `check_out` will show rooms available at those dates. \
 
 **Example Request #1:**  `/hotels` \
 **Example Response #1:**
@@ -13,108 +13,143 @@ This API manages the backend of the application. It will retrieve the hotels and
 {
   "hotels": [
     {
-      "name": "Fairmont Olympic Hotel",
-      "address": "411 University St, Seattle, WA 98101",
-      "phone": "+1 206-621-1700",
-      "rating": 4.6,
-      "amenities": [
-        "Free WiFi",
-        "Pool",
-        "Fitness Center",
-        "Pet-friendly",
-        "Restaurant",
-        "Spa"
-      ]
-    },
-    {
       "name": "The Westin Seattle",
       "address": "1900 5th Ave, Seattle, WA 98101",
-      "phone": "+1 206-728-1000",
-      "rating": 4.3,
+      "description": "A contemporary high-rise hotel offering sleek rooms, an indoor pool, and 2 restaurants.",
+      "rating": 4.5,
+      "phone_number": "206-728-1000",
       "amenities": [
         "Free WiFi",
-        "Pool",
+        "Swimming Pool",
         "Fitness Center",
-        "Pet-friendly",
+        "Business Center",
+        "Spa",
         "Restaurant",
-        "Business Center"
+        "Bar",
+        "Room Service"
+      ],
+      "rooms": [
+        {
+          "type": "Single",
+          "price_per_night": 120
+        },
+        {
+          "type": "Double",
+          "price_per_night": 180
+        },
+        {
+          "type": "Suite",
+          "price_per_night": 300
+        }
       ]
     },
     {
-      "name": "Grand Hyatt Seattle",
-      "address": "721 Pine St, Seattle, WA 98101",
-      "phone": "+1 206-774-1234",
-      "rating": 4.6,
+      "name": "Hotel Max",
+      "address": "620 Stewart St, Seattle, WA 98101",
+      "description": "A trendy, art-focused hotel with a funky lobby, a beer happy hour, and stylish rooms.",
+      "rating": 4.3,
+      "phone_number": "206-728-6299",
       "amenities": [
         "Free WiFi",
         "Fitness Center",
-        "Restaurant",
-        "Spa",
-        "Pet-friendly",
-        "Business Center"
+        "Business Center",
+        "Pet-Friendly",
+        "Art Gallery",
+        "Room Service"
+      ],
+      "rooms": [
+        {
+          "type": "Single",
+          "price_per_night": 110
+        },
+        {
+          "type": "Double",
+          "price_per_night": 170
+        },
+        {
+          "type": "Suite",
+          "price_per_night": 290
+        }
       ]
     },
-    ...
+    ....
   ]
 }
 
 ```
 
-**Example Request #2:**  `/hotels?amenity=pool&rating=4.1` \
+**Example Request #2:**  `/hotels?amenity=Swimming Pool&rating=4.1` \
 **Example Response #2:**
 ```json
 {
   "hotels": [
     {
-      "name": "Fairmont Olympic Hotel",
-      "address": "411 University St, Seattle, WA 98101",
-      "phone": "+1 206-621-1700",
-      "rating": 4.6,
-      "amenities": [
-        "Free WiFi",
-        "Pool",
-        "Fitness Center",
-        "Pet-friendly",
-        "Restaurant",
-        "Spa"
-      ]
-    },
-    {
       "name": "The Westin Seattle",
       "address": "1900 5th Ave, Seattle, WA 98101",
-      "phone": "+1 206-728-1000",
-      "rating": 4.3,
+      "description": "A contemporary high-rise hotel offering sleek rooms, an indoor pool, and 2 restaurants.",
+      "rating": 4.5,
+      "phone_number": "206-728-1000",
       "amenities": [
         "Free WiFi",
-        "Pool",
+        "Swimming Pool",
         "Fitness Center",
-        "Pet-friendly",
+        "Business Center",
+        "Spa",
         "Restaurant",
-        "Business Center"
+        "Bar",
+        "Room Service"
+      ],
+      "rooms": [
+        {
+          "type": "Single",
+          "price_per_night": 120
+        },
+        {
+          "type": "Double",
+          "price_per_night": 180
+        },
+        {
+          "type": "Suite",
+          "price_per_night": 300
+        }
       ]
-    },
-    ...
+    }
   ]
 }
 ```
 
-**Example Request #3:**  `/hotels?name=Motif Seattle` \
+**Example Request #3:**  `/hotels?name=Hotel Max` \
 **Example Response#3:**
 ```json
 {
   "hotels": [
     {
-      "name": "Motif Seattle",
-      "address": "1415 5th Ave, Seattle, WA 98101",
-      "phone": "+1 206-971-8000",
+      "name": "Hotel Max",
+      "address": "620 Stewart St, Seattle, WA 98101",
+      "description": "A trendy, art-focused hotel with a funky lobby, a beer happy hour, and stylish rooms.",
       "rating": 4.3,
+      "phone_number": "206-728-6299",
       "amenities": [
         "Free WiFi",
         "Fitness Center",
-        "Pet-friendly",
-        "Restaurant",
-        "Rooftop Bar",
-        "Business Center"
+        "Business Center",
+        "Pet-Friendly",
+        "Art Gallery",
+        "Room Service"
+      ],
+      "rooms": [
+        {
+          "type": "Single",
+          "price_per_night": 110
+        },
+        {
+          "type": "Double",
+          "price_per_night": 170
+        },
+        {
+          "type": "Suite",
+          "price_per_night": 290
+        }
       ]
     }
   ]
@@ -122,18 +157,22 @@ This API manages the backend of the application. It will retrieve the hotels and
 ```
 **Error Handling:**
 * If the user provides an invalid parameter, a response with a 400 status code and a message of “Invalid parameter name” will be returned.
+* If `check_in` or `check_out` is provided without the other, a reponse with a 400 status code and a message "Must provide both check_in and check_out".
 * If a server error occurs, a response with a 500 status code and a message of “An error occurred on the server. Try again later.” will be returned.
 
 
 ## Log in
 **Request Format:**  `/account/login` with body parameters of `username` and `password` \
 **Request Type:** POST \
-**Returned Data Format**: Text \
+**Returned Data Format**: JSON \
 **Description:**  The endpoint confirms if the account with that `username` and `password` exists in the database, if so a success message will be returned. This endpoint essentially logs the user in. It will be achieving feature 2’s goal of an “Endpoint to check if the username and password match an entry in the database.” \
 **Example Request:** `/account/login` \
 **Example Response:**
 ``` json
-‘Logged in successfully’
+{
+  "user_id": 1,
+  "username": "janedoe"
+}
 ```
 
 **Error Handling:**
@@ -149,6 +188,7 @@ This API manages the backend of the application. It will retrieve the hotels and
 **Example Response:** \
 ``` json
 {
+  "user_id": 1,
   "username": "janedoe"
 }
 ```
@@ -207,7 +247,7 @@ This API manages the backend of the application. It will retrieve the hotels and
 * If a server error occurs, a response with a 500 status code and a message of “An error occurred on the server. Try again later.” will be returned
 
 ## Make Reservation
-**Request Format:**  `/reserve` with body parameters of `user_id`, `room_id`, `check_in_date`, `check_out_date`, and `total_price`. \
+**Request Format:**  `/reserve` with body parameters of `user_id`, `room_id`, `check_in_date`, `check_out_date`. \
 **Request Type:** POST \
 **Returned Data Format**: JSON \
 **Description:** Reserves the room for the logged in user. Checks if the room is available for those dates and if the user doesn't have any overlapping reservations. \

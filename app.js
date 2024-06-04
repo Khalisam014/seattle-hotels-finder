@@ -71,7 +71,7 @@ app.post('/account/login', async (req, res) => {
     let result = await db.get(query, username, password);
     await db.close();
     if (result) {
-      res.type('text').send('Logged in successfully');
+      res.json({'user_id': result.user_id, 'username': result.username});
     } else {
       res.status(CLIENT_ERROR).type('text')
         .send('Username and password do not exist');
