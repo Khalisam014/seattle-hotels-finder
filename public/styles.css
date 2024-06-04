@@ -93,8 +93,8 @@ header a:hover:after {
 #user-greeting {
   font-size: 15px;
   text-decoration: underline;
-  color:black;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  color: black;
+  font-family: "Verdana", "Geneva", "Tahoma", sans-serif;
   font-style: italic;
 }
 
@@ -325,7 +325,7 @@ button:hover {
 
 /* map */
 
-#map{
+#map {
   font-size: 100px;
   padding: 200px;
   height: 200vh;
