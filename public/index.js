@@ -152,7 +152,7 @@
           throw new Error('Network response was not ok. Status: ' + response.status);
         }
         return response.json();
-        })
+      })
       .then(result => {
         if (result.username) {
           sessionStorage.setItem('username', formData.get('username'));

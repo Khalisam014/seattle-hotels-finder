@@ -23,6 +23,9 @@ app.use(express.json());
 app.use(multer().none());
 
 const EIGHT_THOUSAND = 8000;
+const TWENTY_FOUR = 24;
+const SIX_TY = 60;
+const ONE_THOUSAND = 1000;
 
 const CLIENT_ERROR = 400;
 const SERVER_ERROR = 500;
@@ -153,18 +156,18 @@ app.get('/transaction', async (req, res) => {
 app.post('/reserve', async (req, res) => {
   try {
     let user_id = req.body.user_id;
-    let room_id = req.body.room_id;
-    let check_in_date = req.body.check_in_date;
-    let check_out_date = req.body.check_out_date;
+    let roomId = req.body.roomId;
+    let checkInDate = req.body.checkInDate;
+    let checkOutDate = req.body.checkOutDate;
 
-    if (user_id && room_id && check_in_date && check_out_date) {
+    if (user_id && roomId && checkInDate && checkOutDate) {
       let db = await getDBConnection();
-      let errorText = await isReservationValid(db, user_id, room_id, check_in_date, check_out_date);
+      let errorText = await isReservationValid(db, user_id, roomId, checkInDate, checkOutDate);
       if (errorText === '') {
-        let total_price = await findTotalPrice(db, room_id, check_in_date, check_out_date);
-        let query = 'INSERT INTO reservations (user_id, room_id, check_in_date, check_out_date,' +
+        let total_price = await findTotalPrice(db, roomId, checkInDate, checkOutDate);
+        let query = 'INSERT INTO reservations (user_id, room_id, checkInDate, check_out_date,' +
           'total_price) VALUES (?,?,?,?,?)';
-        let result = await db.run(query, user_id, room_id, check_in_date, check_out_date, total_price);
+        let result = await db.run(query, user_id, roomId, checkInDate, checkOutDate, total_price);
         res.json({'reservation_id': result.lastID, 'total_price': total_price});
       } else {
         res.status(CLIENT_ERROR).type('text')
@@ -252,7 +255,7 @@ async function organizeHotelData(db, hotels, amenity, checkIn, checkOut) {
     let availableRooms = [];
     if (checkIn && checkOut) {
       for (let room of rooms) {
-        if (await isReservationValid(db, undefined, room.room_id, checkIn, checkOut) === '') {
+        if (await isReservationValid(db, undefined, room.roomId, checkIn, checkOut) === '') {
           availableRooms.push(room);
         }
       }
@@ -286,9 +289,9 @@ function formatUserTransactionData(result) {
   for (const element of result) {
     let reservation = {
       'reservation_id': element.reservation_id,
-      'room_id': element.room_id,
-      'check_in_date': element.check_in_date,
-      'check_out_date': element.check_out_date,
+      'room_id': element.roomId,
+      'check_in_date': element.checkInDate,
+      'check_out_date': element.checkOutDate,
       'total_price': element.total_price
     }
     userTransactions['reservations'].push(reservation);
@@ -302,13 +305,13 @@ function formatUserTransactionData(result) {
  * empty string.
  * @param {Object} db - the database object for the connection
  * @param {Number} user_id - the user's id
- * @param {Number} room_id - the id of the room that is trying to be reserved.
- * @param {Date} check_in_date - the check in date trying to be reserved
- * @param {Date} check_out_date - the check out date trying to be reserved
+ * @param {Number} roomId - the id of the room that is trying to be reserved.
+ * @param {Date} checkInDate - the check in date trying to be reserved
+ * @param {Date} checkOutDate - the check out date trying to be reserved
  * @returns {String} - the error message, otherwise empty string.
  */
-async function isReservationValid(db, user_id, room_id, check_in_date, check_out_date) {
-  let roomExists = await db.get('SELECT * FROM rooms WHERE room_id = ?', room_id);
+async function isReservationValid(db, user_id, roomId, checkInDate, checkOutDate) {
+  let roomExists = await db.get('SELECT * FROM rooms WHERE room_id = ?', roomId);
   if (!roomExists) {
     return 'This room does not exist.';
   }
@@ -322,8 +325,8 @@ async function isReservationValid(db, user_id, room_id, check_in_date, check_out
       (check_in_date <= ? AND check_out_date >= ?) OR
       (check_in_date < ? AND check_out_date >= ?)
     )`;
-  let roomAvailable = await db.get(roomQuery, room_id, check_in_date, check_out_date,
-    check_in_date, check_out_date, check_in_date, check_in_date, check_out_date, check_out_date);
+  let roomAvailable = await db.get(roomQuery, roomId, checkInDat, checkOutDate,
+    checkInDat, checkOutDate, checkInDat, checkInDat, checkOutDate, checkOutDate);
   if (roomAvailable) {
     return 'This room is already reserved';
   }
@@ -333,9 +336,9 @@ async function isReservationValid(db, user_id, room_id, check_in_date, check_out
     let results = await db.all(userQuery, user_id);
 
     for (let element of results) {
-      if ((element.check_in_date <= check_out_date && element.check_out_date >= check_in_date) ||
-          (element.check_in_date <= check_out_date && element.check_out_date >= check_in_date) ||
-          (element.check_in_date >= check_in_date && element.check_out_date <= check_out_date)) {
+      if ((element.checkInDate <= checkOutDate && element.checkOutDate >= checkInDate) ||
+          (element.checkInDate <= checkOutDate && element.checkOutDate >= checkInDate) ||
+          (element.checkInDate >= checkInDate && element.checkOutDate <= checkOutDate)) {
         return 'You have an overlapping reservation';
       }
     }
@@ -347,19 +350,19 @@ async function isReservationValid(db, user_id, room_id, check_in_date, check_out
 /**
  * Calculates and returns the total price for the reservation.
  * @param {Object} db - the database object for the connect
- * @param {Number} room_id - the room to check price for
- * @param {Date} check_in_date - the check in date for the reservation
- * @param {Date} check_out_date - the check out date for the reservation
+ * @param {Number} roomId - the room to check price for
+ * @param {Date} checkInDate - the check in date for the reservation
+ * @param {Date} checkOutDate - the check out date for the reservation
  * @returns {Number} - the total price for the reservation
  */
-async function findTotalPrice(db, room_id, check_in_date, check_out_date) {
+async function findTotalPrice(db, roomId, checkInDate, checkOutDate) {
   let query = 'SELECT price_per_night FROM rooms WHERE room_id = ?';
-  let result = await db.get(query, room_id);
+  let result = await db.get(query, roomId);
 
-  let checkInDate = new Date(check_in_date);
-  let checkOutDate = new Date(check_out_date);
+  let checkInDate = new Date(checkInDate);
+  let checkOutDate = new Date(checkOutDate);
   let timeDifference = checkOutDate - checkInDate;
-  let days = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+  let days = Math.ceil(timeDifference / (ONE_THOUSAND * SIX_TY * SIX_TY * TWENTY_FOUR));
 
   return days * result.price_per_night;
 }
