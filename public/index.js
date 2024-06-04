@@ -36,7 +36,6 @@
   function updateGreeting() {
     const greeting = id('user-greeting');
     if (greeting) {
-      const username = sessionStorage.getItem('username');
       greeting.textContent = username ? `Welcome, ${username}` : '';
     }
   }
@@ -118,10 +117,10 @@
       method: 'POST',
       body: formData
     }).then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok. Status: ' + response.status);
-        }
-        return response.text();
+      if (!response.ok) {
+        throw new Error('Network response was not ok. Status: ' + response.status);
+      }
+      return response.text();
     }).then(text => {
       if (text.includes("successfully")) {
         sessionStorage.setItem('username', formData.get('username'));
@@ -145,21 +144,24 @@
     fetch('/account/create', {
       method: 'POST',
       body: formData
-    }).then(response => {
+    })
+      .then(response => {
       if (!response.ok) {
         throw new Error('Network response was not ok. Status: ' + response.status);
       }
       return response.json();
-    }).then(result => {
+      })
+      .then(result => {
       if (result.username) {
         sessionStorage.setItem('username', formData.get('username'));
         location.assign('/index.html');
       } else {
         console.error('Account creation failed: ' + result);
       }
-    }).catch(err => {
+      })
+      .catch(err => {
       console.error('Error with account creation:', err);
-    });
+      });
   }
 
   /**
@@ -219,7 +221,7 @@
 
   /**
    * Retrieves an element from the DOM by its id
-   * @param {string} selector - the id of the DOM element
+   * @param {string} id - the id of the DOM element
    * @returns {HTMLElement|null} DOM element associated with the ID or null
    */
   function id(id) {
