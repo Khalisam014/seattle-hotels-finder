@@ -92,21 +92,7 @@ app.post('/account/create', async (req, res) => {
     let address = req.body.address;
 
     if (username && name && email && password && phoneNumber && address) {
-      let db = await getDBConnection();
-      let prevUsername = await db.get('SELECT * FROM users WHERE username = ?', username);
-      if (prevUsername) {
-        return res.status(CLIENT_ERROR).send('Username already exists');
-      }
-      if (!prevUsername) {
-        let query = 'INSERT INTO users (username, name, email, password, phone_number, address) ' +
-          'VALUES (?,?,?,?,?,?)';
-        await db.run(query, username, name, email, password, phoneNumber, address);
-        res.json({'username': username});
-      } else {
-        res.status(CLIENT_ERROR).type('text')
-          .send('Username already exists');
-      }
-      await db.close();
+      helperCreate(username, name, email, password, phoneNumber, address)
     } else {
       res.status(CLIENT_ERROR).type('text')
         .send('One or more of the body parameters are missing.');
@@ -117,6 +103,33 @@ app.post('/account/create', async (req, res) => {
   }
 });
 
+/**
+ * This function is a helper function for creating a new user
+ * @param {string} username - the username of the user
+ * @param {string} name - the name of the user
+ * @param {string} email - the email of the user
+ * @param {string} password - the password of the user
+ * @param {number} phoneNumber - the phone number of the user
+ * @param {string} address - the address of the user
+ * @returns
+ */
+async function helperCreate(username, name, email, password, phoneNumber, address) {
+  let db = await getDBConnection();
+  let prevUsername = await db.get('SELECT * FROM users WHERE username = ?', username);
+  if (prevUsername) {
+    return res.status(CLIENT_ERROR).send('Username already exists');
+  }
+  if (!prevUsername) {
+    let query = 'INSERT INTO users (username, name, email, password, phone_number, address) ' +
+      'VALUES (?,?,?,?,?,?)';
+    await db.run(query, username, name, email, password, phoneNumber, address);
+    res.json({'username': username});
+  } else {
+    res.status(CLIENT_ERROR).type('text')
+      .send('Username already exists');
+  }
+  await db.close();
+}
 
 app.get('/transaction', async (req, res) => {
   try {
