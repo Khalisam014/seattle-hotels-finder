@@ -200,7 +200,9 @@
    * This function is in charge of setting up the slideshow.
    */
   function showSlides() {
-    Array.from(slides).forEach(slide => slide.style.opacity = '0');
+    Array.from(slides).forEach(slide => {
+      slide.style.opacity = '0';
+    });
     slides[slideIndex].style.opacity = '1';
   }
 
