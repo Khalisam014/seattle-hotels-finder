@@ -54,7 +54,7 @@
       setupOutsideClickListener();
       signOutLink.addEventListener('click', signOut);
       slides = document.getElementsByClassName("slide");
-      initSlideshow();
+      initSlideshow(slideInterval);
     }
 
     if (loginForm) {
@@ -180,7 +180,7 @@
    * This function is in charge of setting the interval for how long
    * the slideshow takes before changing the slide.
    */
-  function initSlideshow() {
+  function initSlideshow(slideInterval) {
     slideInterval = setInterval(nextSlide, SIX_SECONDS);
     showSlides();
   }
