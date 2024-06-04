@@ -22,7 +22,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(multer().none());
 
-const EIGHT_THOUSAND = 5501;
+const EIGHT_THOUSAND = 8000;
 
 const CLIENT_ERROR = 400;
 const SERVER_ERROR = 500;
@@ -33,15 +33,20 @@ app.get('/hotels', async (req, res) => {
     let name = req.query.name;
     let amenity = req.query.amenity;
     let rating = req.query.rating;
+    let checkIn = req.query.check_in;
+    let checkOut = req.query.check_out;
     let db = await getDBConnection();
 
-    if (name || amenity || rating) {
-      let result = await getFilteredResult(db, name, amenity, rating);
+    if ((checkIn && !checkOut) || (checkIn && !checkOut)) {
+      res.status(CLIENT_ERROR).type('text')
+        .send('Must provide both check_in and check_out');
+    } else if (name || rating) {
+      let result = await getFilteredResult(db, name, amenity, rating, checkIn, checkOut);
       res.json(result);
     } else { // return all hotels
       let hotelQuery = 'SELECT * FROM hotels';
       let hotels = await db.all(hotelQuery);
-      let result = await organizeHotelData(db, hotels);
+      let result = await organizeHotelData(db, hotels, amenity, checkIn, checkOut);
       res.json(result);
     }
     await db.close();
@@ -185,7 +190,7 @@ app.post('/reserve', async (req, res) => {
  * @param {Number} rating - the rating that the hotel must have more than
  * @returns {JSON} - the json to be sent back
  */
-async function getFilteredResult(db, name, amenity, rating) {
+async function getFilteredResult(db, name, amenity, rating, checkIn, checkOut) {
   let result;
   if (name && rating) {
     let query = 'SELECT * FROM hotels WHERE name LIKE ? AND rating >= ?';
@@ -197,7 +202,7 @@ async function getFilteredResult(db, name, amenity, rating) {
     let query = 'SELECT * FROM hotels WHERE rating >= ?';
     result = await db.all(query, rating);
   }
-  return await organizeHotelData(db, result, amenity);
+  return await organizeHotelData(db, result, amenity, checkIn, checkOut);
 }
 
 /**
@@ -208,11 +213,23 @@ async function getFilteredResult(db, name, amenity, rating) {
  * @param {String} amenity - the amenity to filter by, if needed, otherwise undefined
  * @returns {JSON} - the organized JSON of the hotels
  */
-async function organizeHotelData(db, hotels, amenity) {
+async function organizeHotelData(db, hotels, amenity, checkIn, checkOut) {
   let result = {'hotels': []};
   for (const element of hotels) {
     let amenityQuery = 'SELECT amenity_name FROM amenities WHERE hotel_id = ?';
     let amenities = await db.all(amenityQuery, element.hotel_id);
+    let roomQuery = 'SELECT room_id, type, price_per_night FROM rooms WHERE hotel_id = ?';
+    let rooms = await db.all(roomQuery, element.hotel_id);
+    let availableRooms = [];
+    if (checkIn && checkOut) {
+      for (let room of rooms) {
+        if (await isReservationValid(db, undefined, room.room_id, checkIn, checkOut) === '') {
+          availableRooms.push(room);
+        }
+      }
+    } else {
+      availableRooms = rooms;
+    }
     let amenityNames = amenities.map(amen => amen.amenity_name);
     if (!amenity || amenityNames.includes(amenity)) {
       let hotel = {
@@ -221,7 +238,8 @@ async function organizeHotelData(db, hotels, amenity) {
         'description': element.description,
         'rating': element.rating,
         'phone_number': element.phone_number,
-        'amenities': amenityNames
+        'amenities': amenityNames,
+        'rooms': availableRooms
       }
       result.hotels.push(hotel);
     }
@@ -270,25 +288,27 @@ async function isReservationValid(db, user_id, room_id, check_in_date, check_out
     SELECT * FROM reservations
     WHERE room_id = ?
     AND (
+      (check_in_date == ? AND check_out_date == ?) OR
       (check_in_date < ? AND check_out_date > ?) OR
-      (check_in_date < ? AND check_out_date > ?) OR
-      (check_in_date >= ? AND check_out_date <= ?)
+      (check_in_date <= ? AND check_out_date >= ?) OR
+      (check_in_date < ? AND check_out_date >= ?)
     )`;
-  let roomAvailable = await db.get(roomQuery, room_id, check_out_date,
-    check_in_date, check_out_date, check_in_date, check_in_date, check_out_date);
-  console.log(roomAvailable);
+  let roomAvailable = await db.get(roomQuery, room_id, check_in_date, check_out_date,
+    check_in_date, check_out_date, check_in_date, check_in_date, check_out_date, check_out_date);
   if (roomAvailable) {
     return 'This room is already reserved';
   }
 
-  let userQuery = 'SELECT check_in_date, check_out_date FROM reservations WHERE user_id = ?';
-  let results = await db.all(userQuery, user_id);
+  if (user_id != undefined) {
+    let userQuery = 'SELECT check_in_date, check_out_date FROM reservations WHERE user_id = ?';
+    let results = await db.all(userQuery, user_id);
 
-  for (let element of results) {
-    if ((element.check_in_date <= check_out_date && element.check_out_date >= check_in_date) ||
-        (element.check_in_date <= check_out_date && element.check_out_date >= check_in_date) ||
-        (element.check_in_date >= check_in_date && element.check_out_date <= check_out_date)) {
-      return 'You have an overlapping reservation';
+    for (let element of results) {
+      if ((element.check_in_date <= check_out_date && element.check_out_date >= check_in_date) ||
+          (element.check_in_date <= check_out_date && element.check_out_date >= check_in_date) ||
+          (element.check_in_date >= check_in_date && element.check_out_date <= check_out_date)) {
+        return 'You have an overlapping reservation';
+      }
     }
   }
 
