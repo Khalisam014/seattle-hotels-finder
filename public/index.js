@@ -21,7 +21,7 @@
 
   /**
    * This function is in charge of initializing the main, login, and create
-   * pages. And is also initizalizing the greeting for the user to know if they
+   * pages. And is also initializing the greeting for the user to know if they
    * are logged in or not.
    */
   function init() {
@@ -54,7 +54,7 @@
       setupOutsideClickListener();
       signOutLink.addEventListener('click', signOut);
       slides = document.getElementsByClassName("slide");
-      initSlideshow(slideInterval);
+      slideInterval = initSlideshow(slideInterval);
     }
 
     if (loginForm) {
@@ -80,7 +80,7 @@
   }
 
   /**
-   * This function is in charge of handing the drop down menu.
+   * This function is in charge of handling the drop down menu.
    */
   function setupDropdownToggle() {
     const dropdown = qs('.dropdown-menu');
@@ -106,7 +106,7 @@
 
   /**
    * This function is in charge of logging the user out upon request from the user.
-   * @param {event} event - The event object associated with the form submission.
+   * @param {Event} event - The event object associated with the form submission.
    */
   function handleLogin(event) {
     event.preventDefault();
@@ -136,8 +136,8 @@
 
   /**
    * This function is in charge of creating an account and fetching
-   * the information required to make that happe.
-   * @param {event} event - The event object associated with the form submission.
+   * the information required to make that happen.
+   * @param {Event} event - The event object associated with the form submission.
    */
   function handleCreateAccount(event) {
     event.preventDefault();
@@ -179,15 +179,17 @@
   /**
    * This function is in charge of setting the interval for how long
    * the slideshow takes before changing the slide.
+   * @param {number} interval - The interval for the slideshow in milliseconds.
    */
-  function initSlideshow(slideInterval) {
-    slideInterval = setInterval(nextSlide, SIX_SECONDS);
+  function initSlideshow(interval) {
+    interval = setInterval(nextSlide, SIX_SECONDS);
     showSlides();
+    return interval;
   }
 
   /**
    * This function is in charge of moving to the next slide
-   * in the slideshow
+   * in the slideshow.
    */
   function nextSlide() {
     slideIndex = (slideIndex + 1) % slides.length;
@@ -204,18 +206,18 @@
 
   /**
    * Retrieves the first element from the DOM that matches
-   * the specified CSS selector
-   * @param {string} selector - the CSS selector to match against elements in DOM
-   * @returns {Element|null} The first element of the selector
+   * the specified CSS selector.
+   * @param {string} selector - The CSS selector to match against elements in the DOM.
+   * @returns {Element|null} The first element matching the selector or null.
    */
   function qs(selector) {
     return document.querySelector(selector);
   }
 
   /**
-   * Retrieves an element from the DOM by its id
-   * @param {string} id - the id of the DOM element
-   * @returns {HTMLElement|null} DOM element associated with the ID or null
+   * Retrieves an element from the DOM by its id.
+   * @param {string} id - The id of the DOM element.
+   * @returns {HTMLElement|null} The DOM element associated with the id or null.
    */
   function id(id) {
     return document.getElementById(id);

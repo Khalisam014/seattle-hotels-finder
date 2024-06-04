@@ -104,8 +104,8 @@ app.post('/account/create', async (req, res) => {
         await db.run(query, username, name, email, password, phoneNumber, address);
         res.json({'username': username});
        } else {
-         res.status(CLIENT_ERROR).type('text')
-          .send('Username already exists');
+        res.status(CLIENT_ERROR).type('text')
+        .send('Username already exists');
       }
       await db.close();
     } else {
@@ -184,7 +184,7 @@ app.post('/reserve', async (req, res) => {
     res.status(SERVER_ERROR).type('text')
       .send(SERVER_ERROR_MSG);
   }
-})
+});
 
 app.get('/account/:username', async (req, res) => {
   try {
@@ -234,7 +234,7 @@ async function getFilteredResult(db, name, amenity, rating, checkIn, checkOut) {
     let query = 'SELECT * FROM hotels WHERE rating >= ?';
     result = await db.all(query, rating);
   }
-  return await organizeHotelData(db, result, amenity, checkIn, checkOut);
+  return organizeHotelData(db, result, amenity, checkIn, checkOut);
 }
 
 /**
@@ -325,8 +325,7 @@ async function isReservationValid(db, userId, roomId, checkInDate, checkOutDate)
       (check_in_date <= ? AND check_out_date >= ?) OR
       (check_in_date < ? AND check_out_date >= ?)
     )`;
-  let roomAvailable = await db.get
-  (
+  let roomAvailable = await db.get(
     roomQuery,
     roomId,
     checkInDate,
