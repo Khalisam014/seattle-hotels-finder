@@ -292,7 +292,8 @@ button:hover {
 }
 
 #popup-container,
-#hotel-container {
+#hotel-container,
+#price-container {
   background: white;
   padding: 20px;
   border-radius: 8px;
@@ -326,12 +327,14 @@ button:hover {
 }
 
 #popup-container p,
-#hotel-container p {
+#hotel-container p,
+#price-container p {
   margin: 0 0 20px;
 }
 
 #popup-container button,
-#hotel-container button {
+#hotel-container button,
+#price-container button {
   padding: 10px 20px;
   border: none;
   background: #05440b;
@@ -341,7 +344,8 @@ button:hover {
 }
 
 #popup-container button:hover,
-#hotel-container button:hover {
+#hotel-container button:hover,
+#price-container button:hover {
   background: #05440b7a;
 }
 

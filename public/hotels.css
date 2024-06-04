@@ -49,6 +49,7 @@
   object-fit: cover;
   border-top-left-radius: 15px;
   border-bottom-left-radius: 15px;
+  cursor: pointer;
 }
 
 #hotels article > div {

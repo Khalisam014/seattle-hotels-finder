@@ -147,20 +147,20 @@ app.get('/transaction', async (req, res) => {
 
 app.post('/reserve', async (req, res) => {
   try {
-    let userId = req.body.userId;
-    let roomId = req.body.roomId;
-    let checkInDate = req.body.checkInDate;
-    let checkOutDate = req.body.checkOutDate;
+    let user_id = req.body.user_id;
+    let room_id = req.body.room_id;
+    let check_in_date = req.body.check_in_date;
+    let check_out_date = req.body.check_out_date;
 
-    if (userId && roomId && checkInDate && checkOutDate) {
+    if (user_id && room_id && check_in_date && check_out_date) {
       let db = await getDBConnection();
-      let errorText = await isReservationValid(db, userId, roomId, checkInDate, checkOutDate);
+      let errorText = await isReservationValid(db, user_id, room_id, check_in_date, check_out_date);
       if (errorText === '') {
-        let totalPrice = await findTotalPrice(db, roomId, checkInDate, checkOutDate);
-        let query = 'INSERT INTO reservations (user_id, room_id, checkInDate, check_out_date,' +
+        let total_price = await findTotalPrice(db, room_id, check_in_date, check_out_date);
+        let query = 'INSERT INTO reservations (user_id, room_id, check_in_date, check_out_date,' +
           'total_price) VALUES (?,?,?,?,?)';
-        let result = await db.run(query, userId, roomId, checkInDate, checkOutDate, totalPrice);
-        res.json({'reservation_id': result.lastID, 'total_price': totalPrice});
+        let result = await db.run(query, user_id, room_id, check_in_date, check_out_date, total_price);
+        res.json({'reservation_id': result.lastID, 'total_price': total_price});
       } else {
         res.status(CLIENT_ERROR).type('text')
           .send(errorText);
@@ -278,7 +278,7 @@ function getHotelObject(element, amenityNames, availableRooms) {
     'address': element.address,
     'description': element.description,
     'rating': element.rating,
-    'phone_number': element.phoneNumber,
+    'phone_number': element.phone_number,
     'amenities': amenityNames,
     'rooms': availableRooms
   };
@@ -318,9 +318,7 @@ function formatUserTransactionData(result) {
  */
 async function isReservationValid(db, userId, roomId, checkInDate, checkOutDate) {
   let roomExists = await db.get('SELECT * FROM rooms WHERE room_id = ?', roomId);
-  if (!roomExists) {
-    return 'This room does not exist.';
-  }
+  if (!roomExists) { return 'This room does not exist.'; }
   let roomQuery = `SELECT * FROM reservations WHERE room_id = ? AND ((check_in_date == ? AND
       check_out_date == ?) OR (check_in_date < ? AND check_out_date > ?) OR (check_in_date
       <= ? AND check_out_date >= ?) OR (check_in_date < ? AND check_out_date >= ?))`;
@@ -336,9 +334,7 @@ async function isReservationValid(db, userId, roomId, checkInDate, checkOutDate)
     checkOutDate,
     checkOutDate
   );
-  if (roomAvailable) {
-    return 'This room is already reserved';
-  }
+  if (roomAvailable) { return 'This room is already reserved'; }
   if (userId !== undefined) {
     let userQuery = 'SELECT check_in_date, check_out_date FROM reservations WHERE user_id = ?';
     let results = await db.all(userQuery, userId);

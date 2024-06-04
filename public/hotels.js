@@ -43,6 +43,10 @@
       id('hotel-overlay').classList.remove('overlay');
       id('hotel-container').classList.add('hidden');
     });
+    qs('#price-container button').addEventListener('click', () => {
+      id('price-overlay').classList.remove('overlay');
+      id('price-container').classList.add('hidden');
+    });
   }
 
   /**
@@ -85,7 +89,6 @@
       for (let room of element.rooms) {
         let article = gen('article');
         article.id = room.room_id;
-        article.addEventListener('click', moreInfo);
         if (view === 'list') {
           article.classList.add('article-list');
         } else {
@@ -96,6 +99,7 @@
         let formattedName = element.name.toLowerCase().replace(/\s+/g, '-');
         image.src = 'img/' + formattedName + '.jpg';
         image.alt = element.name;
+        image.addEventListener('click', moreInfo);
 
         let div = gen('div');
         div.appendChild(getHotelInfo(element.name, element.description, room.type));
@@ -237,17 +241,24 @@
       body.append('room_id', roomId);
       body.append('check_in_date', selectedCheckIn);
       body.append('check_out_date', selectedCheckOut);
+      console.log(body);
       fetch('/reserve', {
         method: 'POST',
         body: body
       })
         .then(statusCheck)
         .then(res => res.json())
-        .then(console.alert)
+        .then(displayPrice)
         .catch(handleError);
     } else {
       handleError('Please search for your desired dates and make sure you are logged in.');
     }
+  }
+
+  function displayPrice(data) {
+    qs('#price-container p').textContent = '$' + data.total_price + ' total';
+    id('price-overlay').classList.add('overlay');
+    id('price-container').classList.remove('hidden');
   }
 
   /**
@@ -278,7 +289,7 @@
    * Gets the details for the hotel clicked.
    */
   function moreInfo() {
-    let name = this.querySelector('h2').textContent;
+    let name = this.parentNode.querySelector('h2').textContent;
     fetch('/hotels?name=' + name)
       .then(statusCheck)
       .then(res => res.json())
@@ -291,6 +302,7 @@
    * @param {Object} data - the hotel information
    */
   function displayMoreInfo(data) {
+    console.log(data);
     qs('#hotel-container h2').textContent = data.hotels[0].name;
     id('description').textContent = data.hotels[0].description;
     id('address').textContent = data.hotels[0].address;
