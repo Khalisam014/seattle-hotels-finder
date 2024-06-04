@@ -119,22 +119,19 @@ app.post('/account/create', async (req, res) => {
 
 app.get('/transaction', async (req, res) => {
   try {
-    let reservationID = req.query.reservationID;
-    let userID = req.query.userID;
     let db = await getDBConnection();
 
-    if (reservationID) {
+    if (req.query.reservationID) {
       let query = 'SELECT * FROM reservations WHERE reservation_id = ?';
-      let result = await db.get(query, reservationID);
+      let result = await db.get(query, req.query.reservationID);
       if (result) {
         res.json(result);
       } else {
         res.status(CLIENT_ERROR).type('text')
           .send('No reservation with this ID');
       }
-    } else if (userID) {
-      let query = 'SELECT * FROM reservations WHERE user_id = ?';
-      let result = await db.all(query, userID);
+    } else if (req.query.userID) {
+      let result = await db.all('SELECT * FROM reservations WHERE user_id = ?', req.query.userID);
       if (result.length > 0) {
         let userTransactions = formatUserTransactionData(result);
         res.json(userTransactions);
