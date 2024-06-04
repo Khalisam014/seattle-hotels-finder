@@ -341,6 +341,7 @@ async function isReservationValid(db, userId, roomId, checkInDate, checkOutDate)
 /**
  * A helper function to determine whether the room is available.
  * @param {Object} db - the database object for the connect
+ * @param {Number} roomId - the room to check price for
  * @param {Date} checkInDate - the check in date for the reservation
  * @param {Date} checkOutDate - the check out date for the reservation
  * @returns {Object} - returns the room if there is overlapping time.
