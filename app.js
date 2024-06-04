@@ -22,7 +22,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(multer().none());
 
-const EIGHT_THOUSAND = 5501;
+const EIGHT_THOUSAND = 8000;
 
 const CLIENT_ERROR = 400;
 const SERVER_ERROR = 500;
