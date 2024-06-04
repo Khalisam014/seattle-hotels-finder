@@ -123,9 +123,8 @@ app.get('/transaction', async (req, res) => {
 
     if (req.query.reservationID) {
       let query = 'SELECT * FROM reservations WHERE reservation_id = ?';
-      let result = await db.get(query, req.query.reservationID);
-      if (result) {
-        res.json(result);
+      if (await db.get(query, req.query.reservationID)) {
+        res.json(await db.get(query, req.query.reservationID));
       } else {
         res.status(CLIENT_ERROR).type('text')
           .send('No reservation with this ID');
