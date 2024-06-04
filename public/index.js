@@ -116,20 +116,23 @@
     fetch('/account/login', {
       method: 'POST',
       body: formData
-    }).then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok. Status: ' + response.status);
-      }
-      return response.text();
-    }).then(text => {
-      if (text.includes("successfully")) {
-        sessionStorage.setItem('username', formData.get('username'));
-        updateGreeting();
-        location.assign('/index.html');
-      }
-    }).catch(err => {
-      console.error('Error with login request:', err);
-    });
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok. Status: ' + response.status);
+        }
+        return response.text();
+      })
+      .then(text => {
+        if (text.includes("successfully")) {
+          sessionStorage.setItem('username', formData.get('username'));
+          updateGreeting();
+          location.assign('/index.html');
+        }
+      })
+      .catch(err => {
+        console.error('Error with login request:', err);
+      });
   }
 
   /**
@@ -146,21 +149,21 @@
       body: formData
     })
       .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok. Status: ' + response.status);
-      }
-      return response.json();
-      })
+        if (!response.ok) {
+          throw new Error('Network response was not ok. Status: ' + response.status);
+        }
+        return response.json();
+        })
       .then(result => {
-      if (result.username) {
-        sessionStorage.setItem('username', formData.get('username'));
-        location.assign('/index.html');
-      } else {
-        console.error('Account creation failed: ' + result);
-      }
+        if (result.username) {
+          sessionStorage.setItem('username', formData.get('username'));
+          location.assign('/index.html');
+        } else {
+          console.error('Account creation failed: ' + result);
+        }
       })
       .catch(err => {
-      console.error('Error with account creation:', err);
+        console.error('Error with account creation:', err);
       });
   }
 
