@@ -357,7 +357,6 @@ async function isReservationValid(db, userId, roomId, checkInDate, checkOutDate)
       }
     }
   }
-
   return '';
 }
 
