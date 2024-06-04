@@ -7,16 +7,15 @@
  */
 .hotel-menu,
 #hotels article,
-#hotels article>div,
+#hotels article > div,
 .rating-price {
   display: flex;
   flex-direction: row;
 }
 
 #hotels {
-  margin-bottom: 20px;
   width: 90%;
-  margin: auto;
+  margin: 20px auto;
 }
 
 .hotel-menu {
@@ -52,7 +51,7 @@
   border-bottom-left-radius: 15px;
 }
 
-#hotels article>div {
+#hotels article > div {
   padding: 10px;
   flex-direction: column;
   width: 100%;
@@ -68,7 +67,7 @@
 }
 
 .rating-price,
-#hotels article>div {
+#hotels article > div {
   justify-content: space-between;
 }
 
@@ -76,14 +75,14 @@
   align-items: end;
 }
 
-.rating-price>p span {
+.rating-price > p span {
   border-radius: 5px;
   background-color: #57b777;
   padding: 4px;
   font-weight: 800;
 }
 
-.rating-price div>p span {
+.rating-price div > p span {
   font-weight: 700;
 }
 

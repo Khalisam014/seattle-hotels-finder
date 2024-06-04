@@ -7,8 +7,8 @@
  * are managed through this.
  */
 'use strict';
-(function () {
-  window.addEventListener('load', init)
+(function() {
+  window.addEventListener('load', init);
 
   let selectedAmenity = undefined;
   let selectedCheckIn = undefined;
@@ -21,7 +21,7 @@
   /**
    * The function called on page load. Add many event listeners.
    */
-  function init () {
+  function init() {
     getHotels();
     setAmenityEventListeners();
     qs('#search-bar button').addEventListener('click', () => {
@@ -36,13 +36,13 @@
 
     qs('#searching button').addEventListener('click', () => {
       let hotel = id('search').value;
-      getHotels(selectedAmenity, selectedCheckIn, selectedCheckOut, hotel)
+      getHotels(selectedAmenity, selectedCheckIn, selectedCheckOut, hotel);
     });
 
     qs('#hotel-container button').addEventListener('click', () => {
       id('hotel-overlay').classList.remove('overlay');
       id('hotel-container').classList.add('hidden');
-    })
+    });
   }
 
   /**
@@ -59,7 +59,7 @@
     }
 
     if (checkIn && checkOut) {
-      fetchStr = fetchStr + 'check_in=' + checkIn + '&' + 'check_out=' + checkOut + '&';
+      fetchStr = fetchStr + 'check_in=' + checkIn + '&check_out=' + checkOut + '&';
     }
 
     if (hotelSearch) {
@@ -70,7 +70,7 @@
       .then(statusCheck)
       .then(res => res.json())
       .then((data) => {
-        displayHotels(data, selectedTravelers);
+        displayHotels(data);
       })
       .catch(handleError);
   }
@@ -78,9 +78,8 @@
   /**
    * Creates the tags and displays the hotel.
    * @param {Object} data - the hotel data to display
-   * @param {Number} selectedTravelers - the number of travelers to determine the types of rooms.
    */
-  function displayHotels(data, selectedTravelers) {
+  function displayHotels(data) {
     id('hotels').innerHTML = '';
     for (let element of data.hotels) {
       for (let room of element.rooms) {
@@ -106,8 +105,8 @@
         article.appendChild(div);
 
         if (!selectedTravelers || selectedTravelers < THREE ||
-          (selectedTravelers == THREE && room.type !== 'Single') ||
-          (selectedTravelers > THREE  && room.type === 'Suite')) {
+          (selectedTravelers === THREE && room.type !== 'Single') ||
+          (selectedTravelers > THREE && room.type === 'Suite')) {
           id('hotels').appendChild(article);
         }
       }
@@ -158,8 +157,8 @@
    * @returns {Object} - the rating and price object to append
    */
   function ratingPrice(rating, price) {
-    let ratingPrice = gen('div');
-    ratingPrice.classList.add('rating-price');
+    let rpDiv = gen('div');
+    rpDiv.classList.add('rating-price');
 
     let span1 = gen('span');
     span1.textContent = rating;
@@ -183,9 +182,9 @@
 
     div.appendChild(perNight);
     div.appendChild(button);
-    ratingPrice.appendChild(outOf5);
-    ratingPrice.appendChild(div);
-    return ratingPrice;
+    rpDiv.appendChild(outOf5);
+    rpDiv.appendChild(div);
+    return rpDiv;
   }
 
   /**
@@ -206,7 +205,8 @@
    * Sets the amenity event listeners. Sets the button color and the filters the hotels.
    */
   function setAmenityEventListeners() {
-    const amenities = ['pet-friendly', 'family-friendly', 'hot-tub', 'pool', 'spa', 'free-parking', 'breakfast', 'valet-parking'];
+    const amenities = ['pet-friendly', 'family-friendly', 'hot-tub', 'pool', 'spa',
+      'free-parking', 'breakfast', 'valet-parking'];
 
     for (let amenity of amenities) {
       id(amenity).addEventListener('click', () => {
@@ -215,12 +215,12 @@
           element.classList.remove('clicked');
           selectedAmenity = undefined;
           getHotels();
-      } else {
-          amenities.forEach(a => id(a).classList.remove('clicked'));
-          selectedAmenity = amenity.replace('-', ' ').replace(/\b\w/g, c => c.toUpperCase());
+        } else {
+          amenities.forEach(amen => id(amen).classList.remove('clicked'));
+          selectedAmenity = amenity.replace('-', ' ').replace(/\b\w/g, letter => letter.toUpperCase());
           element.classList.add('clicked');
           getHotels(selectedAmenity, selectedCheckIn, selectedCheckOut, selectedTravelers);
-      }
+        }
       });
     }
   }
@@ -229,11 +229,11 @@
    * Reserves a room for the selected dates, but the user must be logged in.
    */
   function reserveRoom() {
-    let room_id = this.parentNode.parentNode.parentNode.parentNode.id;
+    let roomId = this.parentNode.parentNode.parentNode.parentNode.id;
     if (selectedCheckIn && selectedCheckOut && sessionStorage.getItem('user_id')) {
       let body = new FormData();
       body.append('user_id', sessionStorage.getItem('user_id'));
-      body.append('room_id', room_id);
+      body.append('room_id', roomId);
       body.append('check_in_date', selectedCheckIn);
       body.append('check_out_date', selectedCheckOut);
       fetch('/reserve', {
@@ -245,7 +245,7 @@
         .then(console.alert)
         .catch(handleError);
     } else {
-      handleError('Please search for your desired dates and make sure you are logged in.')
+      handleError('Please search for your desired dates and make sure you are logged in.');
     }
   }
 
@@ -306,12 +306,11 @@
     id('hotel-container').classList.remove('hidden');
   }
 
-
   /**
    * Displays the error is a popup.
    * @param {String} err - the error message
    */
-  function handleError (err) {
+  function handleError(err) {
     id('popup-overlay').classList.add('overlay');
     id('popup-container').classList.remove('hidden');
     id('error-text').textContent = err;
@@ -322,8 +321,8 @@
    * @param {String} name - the given ID
    * @returns {Element} - the object representing the element with the given ID
    */
-  function id (name) {
-    return document.getElementById(name)
+  function id(name) {
+    return document.getElementById(name);
   }
 
   /**
@@ -331,8 +330,8 @@
    * @param {String} selector - the tag to select
    * @returns {Element} - the object representing the first element with the given ID
    */
-  function qs (selector) {
-    return document.querySelector(selector)
+  function qs(selector) {
+    return document.querySelector(selector);
   }
 
   /**
@@ -340,8 +339,8 @@
    * @param {string} query - CSS query selector
    * @returns {object[]} array of DOM objects matching the query.
    */
-  function qsa (query) {
-    return document.querySelectorAll(query)
+  function qsa(query) {
+    return document.querySelectorAll(query);
   }
 
   /**
@@ -349,11 +348,11 @@
    * @param {Response} response - the response to check
    * @returns {Response} - response
    */
-  async function statusCheck (response) {
+  async function statusCheck(response) {
     if (!response.ok) {
-      throw new Error(await response.text())
+      throw new Error(await response.text());
     }
-    return response
+    return response;
   }
 
   /**
@@ -361,7 +360,7 @@
    * @param {String} tagName - The tag that you want to create
    * @returns {Element} - An element with the desired tag
    */
-  function gen (tagName) {
-    return document.createElement(tagName)
+  function gen(tagName) {
+    return document.createElement(tagName);
   }
 })()

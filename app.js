@@ -90,13 +90,9 @@ app.post('/account/create', async (req, res) => {
     let password = req.body.password;
     let phoneNumber = req.body.phoneNumber;
     let address = req.body.address;
-
     if (username && name && email && password && phoneNumber && address) {
       let db = await getDBConnection();
       let prevUsername = await db.get('SELECT * FROM users WHERE username = ?', username);
-      if (prevUsername) {
-        return res.status(CLIENT_ERROR).send('Username already exists');
-      }
       if (!prevUsername) {
         let query = 'INSERT INTO users (username, name, email, password, phone_number, address) ' +
           'VALUES (?,?,?,?,?,?)';
@@ -263,19 +259,30 @@ async function organizeHotelData(db, hotels, amenity, checkIn, checkOut) {
     }
     let amenityNames = amenities.map(amen => amen.amenity_name);
     if (!amenity || amenityNames.includes(amenity)) {
-      let hotel = {
-        'name': element.name,
-        'address': element.address,
-        'description': element.description,
-        'rating': element.rating,
-        'phone_number': element.phoneNumber,
-        'amenities': amenityNames,
-        'rooms': availableRooms
-      };
-      result.hotels.push(hotel);
+      result.hotels.push(getHotelObject(element, amenityNames, availableRooms));
     }
   }
   return result;
+}
+
+/**
+ * A helper function to put together the hotel object.
+ * @param {Object} element - the hotel information
+ * @param {String[]} amenityNames - the hotel's amenities
+ * @param {Object} availableRooms - the hotel's available rooms
+ * @returns {Object} - all the hotel information together
+ */
+function getHotelObject(element, amenityNames, availableRooms) {
+  let hotel = {
+    'name': element.name,
+    'address': element.address,
+    'description': element.description,
+    'rating': element.rating,
+    'phone_number': element.phoneNumber,
+    'amenities': amenityNames,
+    'rooms': availableRooms
+  };
+  return hotel;
 }
 
 /**
@@ -315,27 +322,13 @@ async function isReservationValid(db, userId, roomId, checkInDate, checkOutDate)
     return 'This room does not exist.';
   }
 
-  let roomQuery = `
-    SELECT * FROM reservations
-    WHERE room_id = ?
-    AND (
+  let roomQuery = `SELECT * FROM reservations WHERE room_id = ? AND (
       (check_in_date == ? AND check_out_date == ?) OR
       (check_in_date < ? AND check_out_date > ?) OR
       (check_in_date <= ? AND check_out_date >= ?) OR
-      (check_in_date < ? AND check_out_date >= ?)
-    )`;
-  let roomAvailable = await db.get(
-    roomQuery,
-    roomId,
-    checkInDate,
-    checkOutDate,
-    checkInDate,
-    checkOutDate,
-    checkInDate,
-    checkInDate,
-    checkOutDate,
-    checkOutDate
-  );
+      (check_in_date < ? AND check_out_date >= ?))`;
+  let roomAvailable = await db.get(roomQuery, roomId, checkInDate, checkOutDate,
+    checkInDate, checkOutDate, checkInDate, checkInDate, checkOutDate, checkOutDate);
   if (roomAvailable) {
     return 'This room is already reserved';
   }
@@ -343,7 +336,6 @@ async function isReservationValid(db, userId, roomId, checkInDate, checkOutDate)
   if (userId !== undefined) {
     let userQuery = 'SELECT check_in_date, check_out_date FROM reservations WHERE user_id = ?';
     let results = await db.all(userQuery, userId);
-
     for (let element of results) {
       if ((element.checkInDate <= checkOutDate && element.checkOutDate >= checkInDate) ||
           (element.checkInDate <= checkOutDate && element.checkOutDate >= checkInDate) ||
