@@ -1,21 +1,8 @@
 #Final Project Images 
 <img width="1043" alt="image" src="https://github.com/user-attachments/assets/8ddad840-d9cd-4710-acea-6cfc6902611b">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<img width="1047" alt="image" src="https://github.com/user-attachments/assets/049417d3-2bd6-4a89-bf4f-347c974e694d">
+<img width="1055" alt="image" src="https://github.com/user-attachments/assets/93806514-9938-43ff-afe9-2bce9df2254e">
+<img width="1053" alt="image" src="https://github.com/user-attachments/assets/4f2f29f1-bc1b-4f41-8ac0-cc9cd81d7ea2">
 
 # Final Project Details 
 
