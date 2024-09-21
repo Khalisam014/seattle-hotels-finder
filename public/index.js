@@ -128,7 +128,7 @@
         return response.json();
       })
       .then(data => {
-        if (data.includes("successfully")) {
+        if (data) {
           sessionStorage.setItem('username', formData.get('username'));
           sessionStorage.setItem('user_id', data.user_id);
           updateGreeting();

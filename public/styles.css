@@ -364,3 +364,55 @@ button:hover {
 .hidden {
   display: none;
 }
+
+/* Attractions */
+
+.attractions-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: flex-start;
+  width: 80%;
+  margin: auto;
+}
+
+.attraction {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ddd;
+  margin: 10px;
+  padding: 10px;
+  box-shadow: 0px 2px 8px rgba(126, 126, 126, 0.2);
+  width: 22%;
+  height: 300px;
+  box-sizing: border-box;
+}
+
+.attraction img {
+  max-width: 100%;
+  max-height: 70%;
+  object-fit: cover;
+  margin-bottom: 40px;
+}
+
+.attraction a {
+  text-align: center;
+  padding: 0 10px;
+  margin: 0;
+  flex-grow: 1;
+  color: inherit;
+  text-decoration: none;
+}
+
+.attraction a:hover {
+  text-decoration: underline;
+  color: green;
+}
+
+.title {
+  margin-left: 135px;
+  margin-bottom: 30px;
+}
+

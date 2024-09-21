@@ -22,7 +22,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(multer().none());
 
-const EIGHT_THOUSAND = 8000;
+const EIGHT_THOUSAND = 5501;
 const TWENTY_FOUR = 24;
 const SIX_TY = 60;
 const ONE_THOUSAND = 1000;
